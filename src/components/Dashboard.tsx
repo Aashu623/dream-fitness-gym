@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useGetAllMembersQuery, useDeleteMemberMutation } from '../api/membersApiSlice';
+import { useGetAllMembersQuery, useDeleteMemberMutation } from '@/redux/slice/membersApiSlice';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import { HiPencilSquare } from "react-icons/hi2";

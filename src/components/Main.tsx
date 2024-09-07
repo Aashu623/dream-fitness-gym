@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import logo from '../assets/logo.png'
+import logo from '@/assets/logo.png'
 export default function Main() {
     return (
         <div className="flex justify-between items-center w-full px-8 py-8">

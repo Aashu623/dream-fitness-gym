@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Header from './Header';
 import Stats from './Stats';
 import Main from './Main';
-import logo from '../assets/logo.png';
-import bg1 from '../assets/bg-1.jpg';
-import bg2 from '../assets/bg-2.jpg';
-import bg3 from '../assets/bg-3.jpg';
-import bg4 from '../assets/bg-4.jpg';
+import logo from '@/assets/logo.png';
+import bg1 from '@/assets/bg-1.jpg';
+import bg2 from '@/assets/bg-2.jpg';
+import bg3 from '@/assets/bg-3.jpg';
+import bg4 from '@/assets/bg-4.jpg';
 
 const images = [
     bg1, bg2, bg3, bg4

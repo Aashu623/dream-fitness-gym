@@ -2,7 +2,7 @@
 'use client'
 import Image from 'next/image';
 import Link from 'next/link';
-import logo from '../assets/logo.png'
+import logo from '@/assets/logo.png'
 const Header = () => {
     return (
         < header className="top-0 left-0 w-full bg-gray-500 text-white flex justify-between items-center py-2 px-8" >

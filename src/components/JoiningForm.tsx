@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation"; // useRouter hook for redirection
 import { toast } from "react-hot-toast"; // For toast notifications
-import { useAddMemberMutation } from "../api/membersApiSlice";
+import { useAddMemberMutation } from "@/redux/slice/membersApiSlice";
 import { Toaster } from "react-hot-toast"; // For rendering toast notifications
 
 function JoiningForm() {
