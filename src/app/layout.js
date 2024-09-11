@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Provider } from 'react-redux'
 import store from '../redux/store'
+import { Theme } from '@radix-ui/themes';
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -22,7 +23,9 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <Theme>
+            {children}
+          </Theme>
         </body>
       </html>
     </Provider>

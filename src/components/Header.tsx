@@ -34,8 +34,8 @@ const Header = () => {
             </nav >
 
             {/* Join Now Button */}
-            < Link href="/join" className="bg-orange-600 text-black px-4 py-2 rounded-lg hover:bg-orange-600" >
-                Join Now
+            < Link href="/register" className="bg-orange-600 text-black px-4 py-2 rounded-lg hover:bg-orange-600" >
+                Register
             </Link >
         </header >
     );

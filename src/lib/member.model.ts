@@ -1,7 +1,6 @@
 // member.model.ts
 export interface Member {
-  id: string;
-  serialNumber: string;
+  serialNumber: number;
   name: string;
   age: number;
   email: string;
@@ -10,9 +9,11 @@ export interface Member {
   phone: string;
   address?: string; // Optional
   emergencyContact?: string; // Optional
-  membershipType: string;
+  duration: number;
   paymentMode: string;
   utr?: string; // Optional
   receiverName?: string; // Optional
   verified: boolean;
+  ammount:number,
+  DOJ:Date;
 }

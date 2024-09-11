@@ -1,38 +1,55 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Member } from "../lib/member.model";
+import { Member } from "@/lib/member.model";
 
-export const membersApiSlice = createApi({
+const membersApiSlice = createApi({
   reducerPath: "membersApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "/api/members" }),
+  tagTypes: ["Member", "MemberList"],
   endpoints: (builder) => ({
+    // Fetch all members
     getAllMembers: builder.query<Member[], void>({
-      query: () => "/members",
+      query: () => "/",
+      providesTags: ["MemberList"],
     }),
+
     getMemberById: builder.query<Member, string>({
-      query: (id) => `/members/${id}`,
+      query: (id) => `/${id}`,
+      providesTags: (result, error, id) => [{ type: "Member", id }],
     }),
+
     addMember: builder.mutation<Member, Partial<Member>>({
       query: (newMember) => ({
-        url: "/members",
+        url: "/",
         method: "POST",
         body: newMember,
       }),
+      invalidatesTags: ["MemberList"],
     }),
+
     updateMember: builder.mutation<
       Member,
       { id: string; updatedData: Partial<Member> }
     >({
       query: ({ id, updatedData }) => ({
-        url: `/members/${id}`,
+        url: `/${id}`,
         method: "PUT",
         body: updatedData,
       }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Member", id },
+        "MemberList",
+      ],
     }),
+
     deleteMember: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/members/${id}`,
+        url: `/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: (result, error, id) => [
+        { type: "Member", id },
+        "MemberList",
+      ],
     }),
   }),
 });
@@ -44,3 +61,5 @@ export const {
   useUpdateMemberMutation,
   useDeleteMemberMutation,
 } = membersApiSlice;
+
+export default membersApiSlice;

@@ -1,12 +1,20 @@
+'use client'
+import { useGetAllMembersQuery } from '@/redux/slice/membersApiSlice';
 import Dashboard from '../../components/Dashboard';
-import React from 'react';
+import Skeleton from '@/components/Skeleton'
 
 
 export default function DashboardPage() {
+  const { isLoading } = useGetAllMembersQuery();
+
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Dashboard />
-    </div>
+    <>
+      {isLoading ? <Skeleton /> : (
+        <div className="min-h-screen bg-gray-100">
+          <Dashboard />
+        </div >
+      )}
+    </>
   );
 }

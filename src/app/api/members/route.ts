@@ -1,22 +1,35 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+// /app/api/member/route.js
+import clientPromise from "@/lib/mongodb";
 
-export async function GET() {
-  const members = await prisma.member.findMany();
-  return NextResponse.json(members);
+export async function GET(req) {
+  try {
+    const client = await clientPromise;
+    const db = client.db();
+    const members = await db.collection("members").find({}).toArray();
+    return new Response(JSON.stringify(members), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Error fetching members" }), {
+      status: 500,
+    });
+  }
 }
 
-export async function POST(request: Request) {
-  const data = await request.json();
-  const lastMember = await prisma.member.findFirst({
-    orderBy: { serialNumber: "desc" },
-  });
+export async function POST(req) {
+  try {
+    const client = await clientPromise;
+    const db = client.db();
+    const memberData = await req.json();
 
-  const serialNumber = lastMember ? lastMember.serialNumber + 1 : 1;
+    const result = await db.collection("members").insertOne(memberData);
 
-  const newMember = await prisma.member.create({
-    data: { ...data, serialNumber },
-  });
-
-  return NextResponse.json(newMember);
+    // Return the inserted member data along with the insertedId
+    return new Response(
+      JSON.stringify({ ...memberData, _id: result.insertedId }),
+      { status: 201 }
+    );
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Error creating member" }), {
+      status: 500,
+    });
+  }
 }
