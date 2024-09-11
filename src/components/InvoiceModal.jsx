@@ -54,7 +54,7 @@ export default function InvoiceModal({
   return (
     <div
       id="invoice-modal"
-      className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-orange-100 bg-opacity-50 flex items-center justify-center z-50"
     >
       <div className="bg-white p-6 rounded-lg w-full max-w-6xl shadow-lg overflow-y-auto max-h-[90vh]">
         {/* Invoice Header */}

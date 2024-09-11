@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useGetMemberByIdQuery, useUpdateMemberMutation } from '@/redux/slice/membersApiSlice';
+import { useGetMemberByIdQuery } from '@/redux/slice/membersApiSlice';
 import toast from 'react-hot-toast';
 import { Member } from '@/lib/member.model';
 
@@ -9,7 +9,7 @@ const EditMember = () => {
     const { id } = useParams();
     const router = useRouter();
     const { data: memberData, isLoading } = useGetMemberByIdQuery(id as string);
-    const [updateMember] = useUpdateMemberMutation();
+    // const [updateMember] = useUpdateMemberMutation();
 
     const [member, setMember] = useState<Member | null>(null);
 
@@ -29,7 +29,7 @@ const EditMember = () => {
         e.preventDefault();
         if (member) {
             try {
-                await updateMember({updatedData:member}).unwrap();
+                // await updateMember({updatedData:member}).unwrap();
                 toast.success('Member updated successfully');
                 router.push('/dashboard');
             } catch (error) {
