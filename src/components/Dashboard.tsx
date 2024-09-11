@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useGetAllMembersQuery, useDeleteMemberMutation } from '@/redux/slice/membersApiSlice';
 import toast from 'react-hot-toast';
 
@@ -13,13 +12,8 @@ import InvoiceModal from './InvoiceModal'
 const Dashboard = () => {
     const [selectedMember, setSelectedMember] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const router = useRouter();
     const { data: members = [] } = useGetAllMembersQuery();
     const [deleteMember] = useDeleteMemberMutation();
-
-    const handleEdit = (id) => {
-        router.push(`/edit/${id}`);
-    };
 
     const handleDelete = async (id) => {
         try {
@@ -64,7 +58,6 @@ const Dashboard = () => {
                                 </td>
                                 <td className="py-3 px-4 flex space-x-2">
                                     <HiPencilSquare
-                                        onClick={() => handleEdit(member._id)}
                                         size={20}
                                         className="text-blue-600 cursor-pointer"
                                     />

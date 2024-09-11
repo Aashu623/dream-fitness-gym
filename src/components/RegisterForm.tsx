@@ -79,7 +79,7 @@ function RegisterForm() {
 
             <form
                 onSubmit={handleSubmit}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-md"
+                className="sm:grid sm:grid-cols-2 gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-md"
             >
                 <div className="col-span-2">
                     <input
