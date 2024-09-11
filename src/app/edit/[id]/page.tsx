@@ -25,20 +25,6 @@ const EditMember = () => {
         setMember((prev) => (prev ? { ...prev, [name]: value } : null));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (member) {
-            try {
-                // await updateMember({updatedData:member}).unwrap();
-                toast.success('Member updated successfully');
-                router.push('/dashboard');
-            } catch (error) {
-                toast.error('Failed to update member');
-                console.error('Update failed:', error);
-            }
-        }
-    };
-
     const renderSkeleton = () => (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mx-auto my-8 p-6 bg-slate-50 shadow-md rounded-lg">
             {Array(9).fill(0).map((_, index) => (
@@ -236,7 +222,6 @@ const EditMember = () => {
             </form>
 
             <button
-                onClick={handleSubmit}
                 className="py-2 px-4 bg-blue-600 max-w-screen-md hover:bg-blue-700 text-white font-semibold rounded-md w-full"
             >
                 Update Member

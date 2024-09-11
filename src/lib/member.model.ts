@@ -14,6 +14,6 @@ export interface Member {
   utr?: string; // Optional
   receiverName?: string; // Optional
   verified: boolean;
-  ammount:number,
+  amount:number,
   DOJ:Date;
 }

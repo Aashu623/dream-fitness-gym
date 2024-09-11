@@ -23,6 +23,7 @@ function RegisterForm() {
     const [paymentMode, setPaymentMode] = useState("");
     const [utr, setUtr] = useState("");
     const [receiverName, setReceiverName] = useState("");
+    const [amount, setAmount] = useState(0);
 
     const sendEmailToUser = async (memberDetails: any) => {
         try {
@@ -58,6 +59,7 @@ function RegisterForm() {
                 emergencyContact,
                 duration,
                 paymentMode,
+                amount,
                 utr: paymentMode === "upi" ? utr : "",
                 receiverName: paymentMode === "cash" ? receiverName : "",
             }).unwrap();
@@ -188,7 +190,7 @@ function RegisterForm() {
 
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-1">
                     <select
                         className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent text-white outline-none appearance-none"
                         value={paymentMode}
@@ -199,10 +201,17 @@ function RegisterForm() {
                         <option value="upi" className="bg-transparent text-black hover:text-white ">UPI</option>
                         <option value="cash" className="bg-transparent text-black hover:text-white">Cash</option>
                     </select>
-
-
                 </div>
-
+                <div className="col-span-1">
+                    <input
+                        type="number"
+                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white  outline-none"
+                        placeholder="Enter emergency contact number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        required
+                    />
+                </div>
                 {paymentMode === "upi" && (
                     <div className="col-span-2">
                         <input

@@ -100,12 +100,12 @@ export default function InvoiceModal({
         {/* Invoice Table */}
         <div className="border-t border-b border-gray-300">
           <div className="grid grid-cols-6 py-2 font-bold text-gray-600 bg-gray-100">
-            <div className="col-span-3 pl-4">Description</div>
-            <div className="text-center">Months</div>
+            <div className="col-span-4 pl-4">Description</div>
+            <div className="text-center ">Months</div>
             <div className="text-center">Amount</div>
           </div>
           <div className="grid grid-cols-6 py-2">
-            <div className="col-span-3 pl-4">
+            <div className="col-span-4 pl-4">
               <p>Membership</p>
             </div>
             <div className="text-center">{member?.duration}</div>
