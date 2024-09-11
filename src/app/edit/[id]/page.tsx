@@ -29,7 +29,7 @@ const EditMember = () => {
         e.preventDefault();
         if (member) {
             try {
-                await updateMember({ id: memberData._id, updatedData: member }).unwrap();
+                await updateMember(member).unwrap();
                 toast.success('Member updated successfully');
                 router.push('/dashboard');
             } catch (error) {

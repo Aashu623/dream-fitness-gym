@@ -26,17 +26,14 @@ const membersApiSlice = createApi({
       invalidatesTags: ["MemberList"],
     }),
 
-    updateMember: builder.mutation<
-      Member,
-      { id: string; updatedData: Partial<Member> }
-    >({
-      query: ({ id, updatedData }) => ({
-        url: `/${id}`,
+    updateMember: builder.mutation<Member,{updatedData: Partial<Member> }>({
+      query: ({ updatedData }) => ({
+        url: `/${updatedData.serialNumber}`,
         method: "PUT",
         body: updatedData,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Member", id },
+      invalidatesTags: (result, error) => [
+        { type: "Member" },
         "MemberList",
       ],
     }),
