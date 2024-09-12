@@ -6,8 +6,8 @@ import Member from "@/models/member";
 export async function GET() {
   try {
     await dbConnect();
-    const members = await Member.find();
-    return NextResponse.json({ success: true, data: members });
+    const data = await Member.find();
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },

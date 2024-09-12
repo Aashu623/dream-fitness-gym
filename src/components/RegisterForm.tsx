@@ -23,6 +23,7 @@ function RegisterForm() {
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState(0);
 
+    console.log(members)
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
