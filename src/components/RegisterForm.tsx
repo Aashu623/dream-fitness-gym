@@ -3,13 +3,11 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { useAddMemberMutation, useGetAllMembersQuery } from "@/redux/slice/membersApiSlice";
-import { useSendEmailMutation } from "@/redux/slice/emailApiSlice";
 
 function RegisterForm() {
     const router = useRouter();
     const { data: members } = useGetAllMembersQuery();
     const [addMember] = useAddMemberMutation();
-    const [sendEmail] = useSendEmailMutation();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -25,24 +23,10 @@ function RegisterForm() {
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState(0);
 
-    const sendEmailToUser = async (memberDetails: any) => {
-        try {
-            const res = await sendEmail({ email, memberDetails }).unwrap();
-
-            if (res.ok) {
-                toast.success("Email sent successfully!");
-            } else {
-                toast.error("Failed to send email.");
-            }
-        } catch (error) {
-            console.error("Error sending email:", error);
-            toast.error("Failed to send email.");
-        }
-    };
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        const serialNumber = members.length + 1;
+        const serialNumber = members?.length + 1 || 1;
         const DOJ = new Date();
         try {
 
@@ -63,8 +47,6 @@ function RegisterForm() {
                 utr: paymentMode === "upi" ? utr : "",
                 receiverName: paymentMode === "cash" ? receiverName : "",
             }).unwrap();
-
-            sendEmailToUser(newMember);
 
             toast.success("Member added successfully!");
             router.push("/dashboard");

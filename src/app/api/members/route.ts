@@ -1,35 +1,34 @@
-// /app/api/member/route.js
-import clientPromise from "@/lib/mongodb";
+// src/app/api/members/route.ts
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import Member from "@/models/member";
 
-export async function GET(req) {
+export async function GET() {
   try {
-    const client = await clientPromise;
-    const db = client.db();
-    const members = await db.collection("members").find({}).toArray();
-    return new Response(JSON.stringify(members), { status: 200 });
+    await dbConnect();
+    const members = await Member.find();
+    return NextResponse.json({ success: true, data: members });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Error fetching members" }), {
-      status: 500,
-    });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
-
-export async function POST(req) {
+export async function POST(request: Request) {
   try {
-    const client = await clientPromise;
-    const db = client.db();
-    const memberData = await req.json();
-
-    const result = await db.collection("members").insertOne(memberData);
-
-    // Return the inserted member data along with the insertedId
-    return new Response(
-      JSON.stringify({ ...memberData, _id: result.insertedId }),
+    await dbConnect();
+    const body = await request.json();
+    const newMember = new Member(body);
+    await newMember.save();
+    return NextResponse.json(
+      { success: true, data: newMember },
       { status: 201 }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Error creating member" }), {
-      status: 500,
-    });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 400 }
+    );
   }
 }

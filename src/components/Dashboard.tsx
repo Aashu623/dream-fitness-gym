@@ -1,19 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetAllMembersQuery, useDeleteMemberMutation } from '@/redux/slice/membersApiSlice';
 import toast from 'react-hot-toast';
 
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { FaFileDownload } from "react-icons/fa";
-import InvoiceModal from './InvoiceModal'
+import InvoiceModal from './InvoiceModal';
 
 const Dashboard = () => {
     const [selectedMember, setSelectedMember] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const { data: members = [] } = useGetAllMembersQuery();
+    const { data } = useGetAllMembersQuery();
     const [deleteMember] = useDeleteMemberMutation();
+    const [members, setMembers] = useState([]);
+
+    useEffect(() => {
+        if (data?.data) {
+            setMembers(data.data);
+            console.log(data.data); // Log the correct state value
+        }
+    }, [data]);
 
     const handleDelete = async (id) => {
         try {
@@ -22,6 +30,12 @@ const Dashboard = () => {
         } catch (error) {
             toast.error('Failed to delete member');
         }
+    };
+
+    const handleEdit = (id) => {
+        const memberToEdit = members.find(member => member._id === id);
+        setSelectedMember(memberToEdit);
+        setShowModal(true);
     };
 
     const handlePreview = (member) => {
@@ -46,20 +60,21 @@ const Dashboard = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {members.map((member) => (
+                        {members && members.map((member) => (
                             <tr key={member._id} className="border-t hover:bg-gray-100 transition-all">
-                                <td className="py-3 px-4">{member.name}</td>
-                                <td className="py-3 px-4">{member.email}</td>
-                                <td className="py-3 px-4">{member.phone}</td>
-                                <td className="py-3 px-4">{member.duration} {member.duration ? member.duration > 1 ? 'Months' : 'Month' : ''}</td>
-                                <td className="py-3 px-4">{member.paymentMode}</td>
+                                <td className="py-3 px-4">{member?.name || 'N/A'}</td>
+                                <td className="py-3 px-4">{member?.email || 'N/A'}</td>
+                                <td className="py-3 px-4">{member?.phone || 'N/A'}</td>
+                                <td className="py-3 px-4">{member?.duration} {member.duration ? member.duration > 1 ? 'Months' : 'Month' : ''}</td>
+                                <td className="py-3 px-4">{member?.paymentMode || 'N/A'}</td>
                                 <td className="py-3 px-4">
-                                    {member.paymentMode === 'upi' ? member.utr : member.receiverName}
+                                    {member?.paymentMode === 'upi' ? member?.utr || 'N/A' : member?.receiverName || 'N/A'}
                                 </td>
                                 <td className="py-3 px-4 flex space-x-2">
                                     <HiPencilSquare
                                         size={20}
                                         className="text-blue-600 cursor-pointer"
+                                        onClick={() => handleEdit(member._id)}
                                     />
                                     <MdOutlineDeleteForever
                                         onClick={() => handleDelete(member._id)}
