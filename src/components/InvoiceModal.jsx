@@ -11,27 +11,28 @@ export default function InvoiceModal({
 }) {
   const handleDownloadPDF = () => {
     const modalElement = document.getElementById("invoice-modal");
+    document
+      .querySelectorAll(".no-print")
+      .forEach((el) => (el.style.display = "none"));
+
     if (modalElement) {
       html2canvas(modalElement, { scale: 6 })
         .then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
-          const pdf = new jsPDF("l", "mm", "a4"); // Landscape orientation
+          const pdf = new jsPDF("l", "mm", "a4");
 
-          const pdfWidth = 297; // Width of A4 in landscape orientation
-          const pdfHeight = 210; // Height of A4 in landscape orientation
+          const pdfWidth = 297; 
+          const pdfHeight = 210;
           const canvasWidth = canvas.width;
           const canvasHeight = canvas.height;
 
-          // Calculate the scaling factor
           const scaleX = pdfWidth / canvasWidth;
           const scaleY = pdfHeight / canvasHeight;
-          const scale = Math.max(scaleX, scaleY); // Scale to fit the entire page
+          const scale = Math.max(scaleX, scaleY);
 
-          // Calculate the new image dimensions
           const imgWidth = canvasWidth * scale;
           const imgHeight = canvasHeight * scale;
 
-          // Position the image at the center of the PDF
           const xOffset = (pdfWidth - imgWidth) / 2;
           const yOffset = (pdfHeight - imgHeight) / 2;
 
@@ -40,6 +41,11 @@ export default function InvoiceModal({
         })
         .catch((error) => {
           console.error("Error generating PDF: ", error);
+        })
+        .finally(() => {
+          document
+            .querySelectorAll(".no-print")
+            .forEach((el) => (el.style.display = ""));
         });
     } else {
       console.error("Modal element not found");
@@ -101,15 +107,15 @@ export default function InvoiceModal({
         <div className="border-t border-b border-gray-300">
           <div className="grid grid-cols-6 py-2 font-bold text-gray-600 bg-gray-100">
             <div className="col-span-4 pl-4">Description</div>
-            <div className="text-center ">Months</div>
-            <div className="text-center">Amount</div>
+            <div className="text-center">Months</div>
+            <div className="text-center">Amount (₹)</div>
           </div>
           <div className="grid grid-cols-6 py-2">
             <div className="col-span-4 pl-4">
               <p>Membership</p>
             </div>
-            <div className="text-center">{member?.duration}</div>
-            <div className="text-center">{member?.ammount}</div>
+            <div className="text-center">{member?.duration} months</div>
+            <div className="text-center">₹{member?.amount}</div>
           </div>
         </div>
 
@@ -124,7 +130,8 @@ export default function InvoiceModal({
           </ul>
         </div>
 
-        <div className="text-right mt-4">
+        {/* Buttons (No Print) */}
+        <div className="text-right mt-4 no-print">
           <button
             className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
             onClick={handleDownloadPDF}

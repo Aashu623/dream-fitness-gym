@@ -16,7 +16,7 @@ const memberSchema = new Schema({
   utr: { type: String },
   receiverName: { type: String },
   verified: { type: Boolean, default: false },
-  amount: { type: Number, required: true },
+  amount: { type: String, required: true },
   DOJ: { type: Date, required: true },
 });
 
