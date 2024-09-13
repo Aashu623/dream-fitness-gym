@@ -42,16 +42,16 @@ function RegisterForm() {
     const [utr, setUtr] = useState("");
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState("");
-    // const [serialNumber, setSerialNumber] = useState(108);
-    const serialNumber = 108;
-    // Compute the serial number based on the last member's serial number
-    // useEffect(() => {
-    //     if (members && members.length > 0) {
-    //         const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
-    //         setSerialNumber(lastMemberSerial + 1);
-    //     }
+    const [serialNumber, setSerialNumber] = useState(1);
 
-    // }, [members]);
+    // Compute the serial number based on the last member's serial number
+    useEffect(() => {
+        if (members && members.length > 0) {
+            const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
+            setSerialNumber(lastMemberSerial + 1);
+        }
+
+    }, [members]);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
