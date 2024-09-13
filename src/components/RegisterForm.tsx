@@ -196,7 +196,7 @@ function RegisterForm() {
                         onChange={(e) => setDuration(parseInt(e.target.value))}
                         required
                     >
-                        <option value="" disabled className="bg-transparent text-white">Select membership type</option>
+                        <option value="" className="bg-transparent text-white">Select membership type</option>
                         <option value="1" className="bg-transparent text-white">1 month</option>
                         <option value="3" className="bg-transparent text-white">3 months</option>
                         <option value="6" className="bg-transparent text-white">6 months</option>
