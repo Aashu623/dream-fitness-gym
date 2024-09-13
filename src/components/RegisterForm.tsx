@@ -47,8 +47,8 @@ function RegisterForm() {
     // Compute the serial number based on the last member's serial number
     useEffect(() => {
         if (members && members.length > 0) {
-            const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 107));
-            setSerialNumber(lastMemberSerial + 1);
+            
+            setSerialNumber(109);
         }
     }, [members]);
 
