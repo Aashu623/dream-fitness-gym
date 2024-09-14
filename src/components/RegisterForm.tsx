@@ -12,7 +12,6 @@ const memberSchema = z.object({
     age: z.number().min(1, "Age is required"),
     email: z.string().email("Invalid email").optional(),
     gender: z.enum(["male", "female", "other"]),
-    weight: z.number().positive("Weight must be a positive number").optional(),
     phone: z.string().min(10, "Phone number must be at least 10 digits").max(15, "Phone number must not exceed 15 digits"),
     address: z.string().optional(),
     emergencyContact: z.string().min(10, "Emergency contact must be at least 10 digits").optional(),
@@ -33,7 +32,6 @@ function RegisterForm() {
     const [email, setEmail] = useState("");
     const [gender, setGender] = useState("");
     const [age, setAge] = useState("");
-    const [weight, setWeight] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [emergencyContact, setEmergencyContact] = useState("");
@@ -42,7 +40,7 @@ function RegisterForm() {
     const [utr, setUtr] = useState("");
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState("");
-    const [serialNumber, setSerialNumber] = useState(1);
+    const [serialNumber, setSerialNumber] = useState(0);
     // Compute the serial number based on the last member's serial number
     useEffect(() => {
         if (members && members.length > 0) {
@@ -63,7 +61,6 @@ function RegisterForm() {
             email,
             gender,
             age: parseInt(age),
-            weight: weight ? parseFloat(weight) : undefined,
             phone,
             address,
             emergencyContact,
@@ -99,15 +96,25 @@ function RegisterForm() {
 
             <form
                 onSubmit={handleSubmit}
-                className="sm:grid sm:grid-cols-2 gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-md"
+                className="sm:grid sm:grid-cols-2 border-2 border-orange-400 rounded-xl gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-lg"
             >
-                <div className="col-span-2">
+                <div className="col-span-1">
                     <input
                         type="text"
-                        className="border-b border-gray-300 py-2 px-3 text-white w-full bg-transparent placeholder:text-white outline-none"
+                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
                         placeholder="Enter your name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="col-span-1">
+                    <input
+                        type="number"
+                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                        placeholder="Enter your serial number"
+                        value={serialNumber}
+                        onChange={(e) => setSerialNumber(parseInt(e.target.value))}
                         required
                     />
                 </div>
@@ -149,17 +156,6 @@ function RegisterForm() {
 
                 <div>
                     <input
-                        type="number"
-                        step="0.1"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your weight (kg)"
-                        value={weight}
-                        onChange={(e) => setWeight(e.target.value)}
-                    />
-                </div>
-
-                <div>
-                    <input
                         type="tel"
                         className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
                         placeholder="Enter your phone number"
@@ -168,7 +164,15 @@ function RegisterForm() {
                         required
                     />
                 </div>
-
+                <div>
+                    <input
+                        type="tel"
+                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                        placeholder="Enter emergency contact number"
+                        value={emergencyContact}
+                        onChange={(e) => setEmergencyContact(e.target.value)}
+                    />
+                </div>
                 <div className="col-span-2">
                     <input
                         type="text"
@@ -179,17 +183,9 @@ function RegisterForm() {
                     />
                 </div>
 
-                <div className="col-span-2">
-                    <input
-                        type="tel"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter emergency contact number"
-                        value={emergencyContact}
-                        onChange={(e) => setEmergencyContact(e.target.value)}
-                    />
-                </div>
 
-                <div className="col-span-2">
+
+                <div>
                     <select
                         className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white outline-none"
                         value={duration}
@@ -212,7 +208,7 @@ function RegisterForm() {
                     </select>
                 </div>
 
-                <div className="col-span-1">
+                <div>
                     <select
                         className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white outline-none appearance-none"
                         value={paymentMode}
@@ -225,6 +221,19 @@ function RegisterForm() {
                     </select>
                 </div>
 
+
+
+                <div>
+                    <input
+                        type="number"
+                        step="0.01"
+                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                        placeholder="Enter total amount"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        required
+                    />
+                </div>
                 {
                     paymentMode === "upi" && (
                         <div>
@@ -254,19 +263,6 @@ function RegisterForm() {
                         </div>
                     )
                 }
-
-                <div>
-                    <input
-                        type="number"
-                        step="0.01"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter total amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        required
-                    />
-                </div>
-
                 <div className="col-span-2">
                     <button
                         type="submit"

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([600, 400]);
-    const { name, email: memberEmail, age, gender, phone, weight } = memberDetails;
+    const { name, email: memberEmail, age, gender, phone } = memberDetails;
 
     // Add content to the PDF
     page.drawText(`Member Registration Details`, {
@@ -25,7 +25,6 @@ export async function POST(request: Request) {
     page.drawText(`Age: ${age}`, { x: 50, y: 240, size: 18 });
     page.drawText(`Gender: ${gender}`, { x: 50, y: 210, size: 18 });
     page.drawText(`Phone: ${phone}`, { x: 50, y: 180, size: 18 });
-    page.drawText(`Weight: ${weight}kg`, { x: 50, y: 150, size: 18 });
 
     // Serialize the PDFDocument to bytes
     const pdfBytes = await pdfDoc.save();

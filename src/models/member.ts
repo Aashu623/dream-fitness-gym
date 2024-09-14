@@ -7,7 +7,6 @@ const memberSchema = new Schema({
   age: { type: Number, required: true },
   email: { type: String },
   gender: { type: String, required: true },
-  weight: { type: Number },
   phone: { type: String, required: true },
   address: { type: String },
   emergencyContact: { type: String },
