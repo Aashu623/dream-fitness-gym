@@ -13,6 +13,8 @@ import InvoiceModal from './InvoiceModal';
 const Dashboard = () => {
     const [selectedMember, setSelectedMember] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [memberToDelete, setMemberToDelete] = useState(null);
     const { data } = useGetAllMembersQuery();
     const [deleteMember] = useDeleteMemberMutation();
     const [members, setMembers] = useState([]);
@@ -23,13 +25,20 @@ const Dashboard = () => {
         }
     }, [data]);
 
-    const handleDelete = async (id) => {
+    const confirmDeleteMember = async () => {
         try {
-            await deleteMember(id).unwrap();
+            await deleteMember(memberToDelete._id).unwrap();
             toast.success('Member deleted successfully');
+            setShowDeleteDialog(false);
+            setMemberToDelete(null);
         } catch (error) {
             toast.error('Failed to delete member');
         }
+    };
+
+    const handleDeleteClick = (member) => {
+        setMemberToDelete(member); // Set the member to be deleted
+        setShowDeleteDialog(true); // Show the confirmation dialog
     };
 
     const handleEdit = (id) => {
@@ -107,20 +116,20 @@ const Dashboard = () => {
                                 <td className="py-3 px-4">{member?.phone || 'N/A'}</td>
                                 <td className="py-3 px-4">{formatDate(member?.DOJ)}</td>
                                 <td className="py-3 px-4">{calculateValidUpto(member?.DOJ, member?.duration)}</td>
-                                <td className="py-3 px-4 flex space-x-2">
+                                <td className="py-3 px-4 flex gap-2 space-x-2">
                                     <HiPencilSquare
-                                        size={20}
+                                        size={25}
                                         className="text-blue-600 cursor-pointer"
                                         onClick={() => handleEdit(member._id)}
                                     />
                                     <MdOutlineDeleteForever
-                                        onClick={() => handleDelete(member._id)}
-                                        size={20}
+                                        onClick={() => handleDeleteClick(member)}
+                                        size={25}
                                         className="text-red-600 cursor-pointer"
                                     />
                                     <FaFileDownload
                                         onClick={() => handlePreview(member)}
-                                        size={20}
+                                        size={25}
                                         className="text-green-600 cursor-pointer"
                                     />
                                 </td>
@@ -132,6 +141,29 @@ const Dashboard = () => {
 
             {showModal && selectedMember && (
                 <InvoiceModal member={selectedMember} setShowModal={setShowModal} setSelectedMember={setSelectedMember} />
+            )}
+
+            {showDeleteDialog && memberToDelete && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+                        <p>Are you sure you want to delete <strong>{memberToDelete.name}</strong>?</p>
+                        <div className="mt-6 flex justify-end gap-4">
+                            <button
+                                onClick={confirmDeleteMember}
+                                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                onClick={() => setShowDeleteDialog(false)}
+                                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
