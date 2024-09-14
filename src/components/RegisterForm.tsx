@@ -41,18 +41,18 @@ function RegisterForm() {
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState("");
     const [serialNumber, setSerialNumber] = useState(0);
+    const [DOJ, setDOJ] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
+
     // Compute the serial number based on the last member's serial number
     useEffect(() => {
         if (members && members.length > 0) {
             const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
             setSerialNumber(lastMemberSerial + 1);
         }
-
     }, [members]);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        const DOJ = new Date();
 
         // Gather form data
         const formData = {
@@ -69,7 +69,7 @@ function RegisterForm() {
             utr: paymentMode === "upi" ? utr : undefined,
             receiverName: paymentMode === "cash" ? receiverName : undefined,
             amount: parseFloat(amount),
-            DOJ,
+            DOJ: new Date(DOJ), // Set DOJ to selected date
         };
 
         // Validate formData using Zod schema
@@ -263,6 +263,19 @@ function RegisterForm() {
                         </div>
                     )
                 }
+
+                <div className="col-span-1">
+                    <label htmlFor="doj" className="block text-white">Joining Date:</label>
+                    <input
+                        type="date"
+                        id="doj"
+                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                        value={DOJ}
+                        onChange={(e) => setDOJ(e.target.value)}
+                        required
+                    />
+                </div>
+
                 <div className="col-span-2">
                     <button
                         type="submit"
@@ -271,8 +284,8 @@ function RegisterForm() {
                         Register
                     </button>
                 </div>
-            </form >
-        </div >
+            </form>
+        </div>
     );
 }
 

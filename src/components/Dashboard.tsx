@@ -18,27 +18,74 @@ const Dashboard = () => {
     const { data } = useGetAllMembersQuery();
     const [deleteMember] = useDeleteMemberMutation();
     const [members, setMembers] = useState([]);
+    const [filteredMembers, setFilteredMembers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const [sortBy, setSortBy] = useState({ field: '', order: 'asc' }); // Track sorting field and order
+    const [pin, setPin] = useState(''); // Store the entered PIN
+    const correctPin = '191800'; // Define the correct PIN
 
     useEffect(() => {
         if (data) {
-            setMembers(data); // data is already an array of members
+            setMembers(data); // Set initial members
+            setFilteredMembers(data); // Set filtered members as well
         }
     }, [data]);
 
+    // Update filteredMembers based on search query
+    useEffect(() => {
+        let filtered = members;
+
+        if (searchQuery) {
+            filtered = filtered.filter(member =>
+                member.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        setFilteredMembers(filtered);
+    }, [searchQuery, members]);
+
+    // Sort function
+    const handleSort = (field) => {
+        const isAsc = sortBy.field === field && sortBy.order === 'asc';
+        const order = isAsc ? 'desc' : 'asc';
+
+        const sorted = [...filteredMembers].sort((a, b) => {
+            if (field === 'serialNumber') {
+                return order === 'asc'
+                    ? (a.serialNumber || 0) - (b.serialNumber || 0)
+                    : (b.serialNumber || 0) - (a.serialNumber || 0);
+            } else if (field === 'name') {
+                return order === 'asc'
+                    ? a.name.localeCompare(b.name)
+                    : b.name.localeCompare(a.name);
+            }
+            return 0;
+        });
+
+        setFilteredMembers(sorted);
+        setSortBy({ field, order });
+    };
+
     const confirmDeleteMember = async () => {
-        try {
-            await deleteMember(memberToDelete._id).unwrap();
-            toast.success('Member deleted successfully');
-            setShowDeleteDialog(false);
-            setMemberToDelete(null);
-        } catch (error) {
-            toast.error('Failed to delete member');
+        if (pin === correctPin) {
+            try {
+                await deleteMember(memberToDelete._id).unwrap();
+                toast.success('Member deleted successfully');
+                setShowDeleteDialog(false);
+                setMemberToDelete(null);
+                setPin(''); // Reset PIN input
+            } catch (error) {
+                toast.error('Failed to delete member');
+            }
+        } else {
+            toast.error('Incorrect PIN, deletion failed');
         }
     };
 
     const handleDeleteClick = (member) => {
-        setMemberToDelete(member); // Set the member to be deleted
-        setShowDeleteDialog(true); // Show the confirmation dialog
+        setMemberToDelete(member);
+        setShowDeleteDialog(true);
     };
 
     const handleEdit = (id) => {
@@ -52,22 +99,19 @@ const Dashboard = () => {
         setShowModal(true);
     };
 
-    // Helper function to calculate the "Valid Upto" date
     const calculateValidUpto = (DOJ, duration) => {
         const joiningDate = new Date(DOJ);
-        joiningDate.setMonth(joiningDate.getMonth() + duration); // Add the duration in months
-        return joiningDate.toLocaleDateString('en-GB'); // Format as DD/MM/YYYY
+        joiningDate.setMonth(joiningDate.getMonth() + duration);
+        return joiningDate.toLocaleDateString('en-GB');
     };
 
-    // Helper function to format the date as DD/MM/YYYY
     const formatDate = (date) => {
-        return new Date(date).toLocaleDateString('en-GB'); // Format as DD/MM/YYYY
+        return new Date(date).toLocaleDateString('en-GB');
     };
 
-    // Handle Excel export
     const handleDownloadExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(
-            members.map((member) => ({
+            filteredMembers.map((member) => ({
                 Name: member.name,
                 Email: member.email,
                 Phone: member.phone,
@@ -84,22 +128,43 @@ const Dashboard = () => {
         <div className="max-w-6xl mx-auto p-6">
             <h2 className="text-3xl text-center font-bold mb-6">Dream Fitness Members</h2>
 
-            {/* Button to download Excel */}
-            <div className="flex justify-end mb-4">
-                <button
-                    onClick={handleDownloadExcel}
-                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
-                >
-                    Download Excel
-                </button>
+            {/* Search */}
+            <div className="flex justify-between mb-4">
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by name"
+                    className="border rounded-md w-1/3 p-2"
+                />
+                <div >
+                    <button
+                        onClick={handleDownloadExcel}
+                        className="bg-green-500 text-white px-4 p-2 rounded-md hover:bg-green-600 transition-colors"
+                    >
+                        Download Excel
+                    </button>
+                </div>
             </div>
+
+            {/* Button to download Excel */}
 
             <div className="overflow-x-auto max-h-[75vh]">
                 <table className="min-w-full bg-white shadow-md rounded-md overflow-hidden">
                     <thead className="bg-gray-200 sticky top-0 z-10">
                         <tr>
-                            <th className="py-3 px-4 text-left">Sr. No.</th>
-                            <th className="py-3 px-4 text-left min-w-[150px]">Name</th>
+                            <th
+                                className="py-3 px-4 text-left cursor-pointer"
+                                onClick={() => handleSort('serialNumber')}
+                            >
+                                Sr. No. {'↑↓'}
+                            </th>
+                            <th
+                                className="py-3 px-4 text-left cursor-pointer"
+                                onClick={() => handleSort('name')}
+                            >
+                                Name {'↑↓'}
+                            </th>
                             <th className="py-3 px-4 text-left">Email</th>
                             <th className="py-3 px-4 text-left">Phone</th>
                             <th className="py-3 px-4 text-left">Date of Joining</th>
@@ -108,33 +173,41 @@ const Dashboard = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {members && members.map((member) => (
-                            <tr key={member._id} className="border-t hover:bg-gray-100 transition-all">
-                                <td className="py-3 px-4">{member?.serialNumber || 'N/A'}</td>
-                                <td className="py-3 px-4">{member?.name || 'N/A'}</td>
-                                <td className="py-3 px-4">{member?.email || 'N/A'}</td>
-                                <td className="py-3 px-4">{member?.phone || 'N/A'}</td>
-                                <td className="py-3 px-4">{formatDate(member?.DOJ)}</td>
-                                <td className="py-3 px-4">{calculateValidUpto(member?.DOJ, member?.duration)}</td>
-                                <td className="py-3 px-4 flex gap-2 space-x-2">
-                                    <HiPencilSquare
-                                        size={25}
-                                        className="text-blue-600 cursor-pointer"
-                                        onClick={() => handleEdit(member._id)}
-                                    />
-                                    <MdOutlineDeleteForever
-                                        onClick={() => handleDeleteClick(member)}
-                                        size={25}
-                                        className="text-red-600 cursor-pointer"
-                                    />
-                                    <FaFileDownload
-                                        onClick={() => handlePreview(member)}
-                                        size={25}
-                                        className="text-green-600 cursor-pointer"
-                                    />
+                        {filteredMembers.length > 0 ? (
+                            filteredMembers.map((member) => (
+                                <tr key={member._id} className="border-t hover:bg-gray-100 transition-all">
+                                    <td className="py-3 px-4">{member?.serialNumber || 'N/A'}</td>
+                                    <td className="py-3 px-4">{member?.name || 'N/A'}</td>
+                                    <td className="py-3 px-4">{member?.email || 'N/A'}</td>
+                                    <td className="py-3 px-4">{member?.phone || 'N/A'}</td>
+                                    <td className="py-3 px-4">{formatDate(member?.DOJ)}</td>
+                                    <td className="py-3 px-4">{calculateValidUpto(member?.DOJ, member?.duration)}</td>
+                                    <td className="py-3 px-4 flex gap-2 space-x-2">
+                                        <HiPencilSquare
+                                            size={25}
+                                            className="text-blue-600 cursor-pointer"
+                                            onClick={() => handleEdit(member._id)}
+                                        />
+                                        <MdOutlineDeleteForever
+                                            onClick={() => handleDeleteClick(member)}
+                                            size={25}
+                                            className="text-red-600 cursor-pointer"
+                                        />
+                                        <FaFileDownload
+                                            onClick={() => handlePreview(member)}
+                                            size={25}
+                                            className="text-green-600 cursor-pointer"
+                                        />
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td className="text-center py-4">
+                                    No members found
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -147,19 +220,32 @@ const Dashboard = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg">
                         <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
-                        <p>Are you sure you want to delete <strong>{memberToDelete.name}</strong>?</p>
-                        <div className="mt-6 flex justify-end gap-4">
+                        <p>Are you sure you want to delete {memberToDelete.name}?</p>
+                        <div className="mt-4">
+                            <label htmlFor="pin" className="block mb-2">Enter PIN:</label>
+                            <input
+                                type="password"
+                                id="pin"
+                                value={pin}
+                                onChange={(e) => setPin(e.target.value)}
+                                className="border p-2 rounded-md w-full"
+                            />
+                        </div>
+                        <div className="mt-4 flex justify-end space-x-2">
                             <button
-                                onClick={confirmDeleteMember}
-                                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-                            >
-                                Delete
-                            </button>
-                            <button
-                                onClick={() => setShowDeleteDialog(false)}
-                                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                                className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+                                onClick={() => {
+                                    setShowDeleteDialog(false);
+                                    setPin(''); // Clear PIN on cancel
+                                }}
                             >
                                 Cancel
+                            </button>
+                            <button
+                                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+                                onClick={confirmDeleteMember}
+                            >
+                                Delete
                             </button>
                         </div>
                     </div>
