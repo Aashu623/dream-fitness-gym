@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import logo from "@/assets/logo.png";
@@ -16,12 +16,12 @@ export default function InvoiceModal({
       .forEach((el) => (el.style.display = "none"));
 
     if (modalElement) {
-      html2canvas(modalElement, { scale: 6 })
+      html2canvas(modalElement, { scale: 1.2 })
         .then((canvas) => {
           const imgData = canvas.toDataURL("image/png");
           const pdf = new jsPDF("l", "mm", "a4");
 
-          const pdfWidth = 297; 
+          const pdfWidth = 297;
           const pdfHeight = 210;
           const canvasWidth = canvas.width;
           const canvasHeight = canvas.height;
@@ -57,6 +57,15 @@ export default function InvoiceModal({
     setSelectedMember(null);
   };
 
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-GB"); // Format as DD/MM/YYYY
+  };
+
+  const calculateValidUpto = (DOJ, duration) => {
+    const joiningDate = new Date(DOJ);
+    joiningDate.setMonth(joiningDate.getMonth() + duration); // Add the duration in months
+    return joiningDate.toLocaleDateString("en-GB"); // Format as DD/MM/YYYY
+  };
   return (
     <div
       id="invoice-modal"
@@ -76,7 +85,13 @@ export default function InvoiceModal({
               Serial No: <strong>{member?.serialNumber}</strong>
             </p>
             <p className="text-sm">
-              Joining Date: <strong>{member?.DOJ}</strong>
+              Joining Date: <strong>{formatDate(member?.DOJ)}</strong>
+            </p>
+            <p className="text-sm">
+              Renew On :{" "}
+              <strong>
+                {calculateValidUpto(member?.DOJ, member?.duration)}
+              </strong>
             </p>
           </div>
         </div>
@@ -88,9 +103,9 @@ export default function InvoiceModal({
             <p>
               <strong>Dream Fitness Gym</strong>
             </p>
-            <p>123 Gym Street</p>
-            <p>City, State</p>
-            <p>Email: gym@fitness.com</p>
+            <p>Tirupati heights, Near vishnupuri ibus stop, bhanwarkuan</p>
+            <p>Indore, Madhya Pradesh</p>
+            <p>Email: dreamfittnessgym@gmail.com</p>
           </div>
           <div className="text-right">
             <h4 className="text-lg font-semibold mb-2">Bill to</h4>
@@ -106,15 +121,23 @@ export default function InvoiceModal({
         {/* Invoice Table */}
         <div className="border-t border-b border-gray-300">
           <div className="grid grid-cols-6 py-2 font-bold text-gray-600 bg-gray-100">
-            <div className="col-span-4 pl-4">Description</div>
+            <div className="col-span-2 pl-4">Description</div>
             <div className="text-center">Months</div>
+            <div className="text-center">Payment mode</div>
+            <div className="text-center">UTR/Receiver Name</div>
             <div className="text-center">Amount (₹)</div>
           </div>
           <div className="grid grid-cols-6 py-2">
-            <div className="col-span-4 pl-4">
+            <div className="col-span-2 pl-4">
               <p>Membership</p>
             </div>
             <div className="text-center">{member?.duration} months</div>
+            <div className="text-center">{member?.paymentMode}</div>
+            {member?.utr && <div className="text-center">{member?.utr}</div>}
+            {member?.receiverName && (
+              <div className="text-center">{member?.receiverName}</div>
+            )}
+
             <div className="text-center">₹{member?.amount}</div>
           </div>
         </div>
@@ -126,7 +149,7 @@ export default function InvoiceModal({
             <li>All payments are non-refundable.</li>
             <li>Memberships are valid only for the duration specified.</li>
             <li>Please keep this invoice for your records.</li>
-            <li>Contact us at gym@fitness.com for any queries or issues.</li>
+            <li>Contact us at dreamfittnessgym@gmail.com for any queries or issues.</li>
           </ul>
         </div>
 

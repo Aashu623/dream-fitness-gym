@@ -43,7 +43,6 @@ function RegisterForm() {
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState("");
     const [serialNumber, setSerialNumber] = useState(1);
-
     // Compute the serial number based on the last member's serial number
     useEffect(() => {
         if (members && members.length > 0) {
@@ -55,7 +54,7 @@ function RegisterForm() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-        const DOJ = new Date(); // Date of Joining
+        const DOJ = new Date();
 
         // Gather form data
         const formData = {
@@ -130,10 +129,10 @@ function RegisterForm() {
                         onChange={(e) => setGender(e.target.value)}
                         required
                     >
-                        <option value="" disabled className="bg-transparent text-white">Select your gender</option>
-                        <option value="male" className="bg-transparent text-white">Male</option>
-                        <option value="female" className="bg-transparent text-white">Female</option>
-                        <option value="other" className="bg-transparent text-white">Other</option>
+                        <option value="" disabled className="bg-transparent text-orange-500">Select your gender</option>
+                        <option value="male" className="bg-transparent text-orange-500">Male</option>
+                        <option value="female" className="bg-transparent text-orange-500">Female</option>
+                        <option value="other" className="bg-transparent text-orange-500">Other</option>
                     </select>
                 </div>
 
@@ -197,11 +196,19 @@ function RegisterForm() {
                         onChange={(e) => setDuration(parseInt(e.target.value))}
                         required
                     >
-                        <option value="" className="bg-transparent text-white">Select membership type</option>
-                        <option value="1" className="bg-transparent text-white">1 month</option>
-                        <option value="3" className="bg-transparent text-white">3 months</option>
-                        <option value="6" className="bg-transparent text-white">6 months</option>
-                        <option value="12" className="bg-transparent text-white">12 months (yearly)</option>
+                        <option value="" className="bg-transparent font-semibold text-orange-500">Select membership type</option>
+                        <option value={1} className="bg-transparent font-semibold text-orange-500">1 month</option>
+                        <option value={2} className="bg-transparent font-semibold text-orange-500">2 months</option>
+                        <option value={3} className="bg-transparent font-semibold text-orange-500">3 months</option>
+                        <option value={4} className="bg-transparent font-semibold text-orange-500">4 months</option>
+                        <option value={5} className="bg-transparent font-semibold text-orange-500">5 months</option>
+                        <option value={6} className="bg-transparent font-semibold text-orange-500">6 months</option>
+                        <option value={7} className="bg-transparent font-semibold text-orange-500">7 months</option>
+                        <option value={8} className="bg-transparent font-semibold text-orange-500">8 months</option>
+                        <option value={9} className="bg-transparent font-semibold text-orange-500">9 months</option>
+                        <option value={10} className="bg-transparent font-semibold text-orange-500">10 months</option>
+                        <option value={11} className="bg-transparent font-semibold text-orange-500">11 months</option>
+                        <option value={12} className="bg-transparent font-semibold text-orange-500">12 months (yearly)</option>
                     </select>
                 </div>
 
@@ -212,37 +219,41 @@ function RegisterForm() {
                         onChange={(e) => setPaymentMode(e.target.value)}
                         required
                     >
-                        <option value="" disabled className="bg-transparent text-white">Select payment mode</option>
-                        <option value="upi" className="bg-transparent text-white">UPI</option>
-                        <option value="cash" className="bg-transparent text-white">Cash</option>
+                        <option value="" disabled className="bg-transparent text-orange-500">Select payment mode</option>
+                        <option value="upi" className="bg-transparent text-orange-500">UPI</option>
+                        <option value="cash" className="bg-transparent text-orange-500">Cash</option>
                     </select>
                 </div>
 
-                {paymentMode === "upi" && (
-                    <div>
-                        <input
-                            type="text"
-                            className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                            placeholder="Enter UTR"
-                            value={utr}
-                            onChange={(e) => setUtr(e.target.value)}
-                            required
-                        />
-                    </div>
-                )}
+                {
+                    paymentMode === "upi" && (
+                        <div>
+                            <input
+                                type="text"
+                                className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                                placeholder="Enter UTR"
+                                value={utr}
+                                onChange={(e) => setUtr(e.target.value)}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
-                {paymentMode === "cash" && (
-                    <div>
-                        <input
-                            type="text"
-                            className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                            placeholder="Enter receiver name"
-                            value={receiverName}
-                            onChange={(e) => setReceiverName(e.target.value)}
-                            required
-                        />
-                    </div>
-                )}
+                {
+                    paymentMode === "cash" && (
+                        <div>
+                            <input
+                                type="text"
+                                className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                                placeholder="Enter receiver name"
+                                value={receiverName}
+                                onChange={(e) => setReceiverName(e.target.value)}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
                 <div>
                     <input
@@ -264,8 +275,8 @@ function RegisterForm() {
                         Register
                     </button>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 }
 
