@@ -5,7 +5,6 @@ export interface Member {
   age: number;
   email: string;
   gender: string;
-  weight: number;
   phone: string;
   address?: string; // Optional
   emergencyContact?: string; // Optional
