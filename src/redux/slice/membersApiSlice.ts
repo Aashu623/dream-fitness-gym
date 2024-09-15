@@ -12,7 +12,7 @@ const membersApiSlice = createApi({
       providesTags: ["MemberList"],
     }),
 
-    getMemberById: builder.query<Member, string>({
+    getMemberById: builder.query<Member, any>({
       query: (id) => `/${id}`,
       providesTags: (result, error, id) => [{ type: "Member", id }],
     }),
@@ -26,16 +26,13 @@ const membersApiSlice = createApi({
       invalidatesTags: ["MemberList"],
     }),
 
-    updateMember: builder.mutation<Member,{updatedData: Partial<Member> }>({
-      query: ({ updatedData }) => ({
-        url: `/${updatedData.serialNumber}`,
+    updateMember: builder.mutation<Member, {id:string, updatedData: Partial<Member> }>({
+      query: ({ id,updatedData }) => ({
+        url: `/${id}`,
         method: "PUT",
         body: updatedData,
       }),
-      invalidatesTags: (result, error) => [
-        { type: "Member" },
-        "MemberList",
-      ],
+      invalidatesTags: (result, error) => [{ type: "Member" }, "MemberList"],
     }),
 
     deleteMember: builder.mutation<void, string>({

@@ -9,30 +9,67 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { FaFileDownload } from "react-icons/fa";
 import InvoiceModal from './InvoiceModal';
+import Link from 'next/link';
 
 const Dashboard = () => {
     const [selectedMember, setSelectedMember] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [memberToDelete, setMemberToDelete] = useState(null);
-    const { data } = useGetAllMembersQuery();
+    const { data: members } = useGetAllMembersQuery();
     const [deleteMember] = useDeleteMemberMutation();
-    const [members, setMembers] = useState([]);
     const [filteredMembers, setFilteredMembers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const [sortBy, setSortBy] = useState({ field: '', order: 'asc' }); // Track sorting field and order
-    const [pin, setPin] = useState(''); // Store the entered PIN
-    const correctPin = '191800'; // Define the correct PIN
+    const [filterVerified, setFilterVerified] = useState(''); // For verified/unverified
+    const [filterGender, setFilterGender] = useState(''); // For male/female
+    const [filterDuration, setFilterDuration] = useState(''); // For duration
+    const [filterDOJ, setFilterDOJ] = useState(''); // For Date of Joining
+    const [filterValidUpto, setFilterValidUpto] = useState(''); // For Valid Upto
 
     useEffect(() => {
-        if (data) {
-            setMembers(data); // Set initial members
-            setFilteredMembers(data); // Set filtered members as well
-        }
-    }, [data]);
+        let filtered = members;
 
-    // Update filteredMembers based on search query
+        // Filter by search query
+        if (searchQuery) {
+            filtered = filtered.filter(member =>
+                member.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        // Filter by verified/unverified status
+        if (filterVerified) {
+            filtered = filtered.filter(member =>
+                filterVerified === 'verified' ? member.verified : !member.verified
+            );
+        }
+
+        // Filter by gender
+        if (filterGender) {
+            filtered = filtered.filter(member => member.gender === filterGender);
+        }
+
+        // Filter by duration
+        if (filterDuration) {
+            filtered = filtered.filter(member => member.duration === parseInt(filterDuration));
+        }
+
+        // Filter by DOJ (Date of Joining)
+        if (filterDOJ) {
+            filtered = filtered.filter(member => formatDate(member.DOJ) === formatDate(filterDOJ));
+        }
+
+        // Filter by Valid Upto
+        if (filterValidUpto) {
+            filtered = filtered.filter(member => calculateValidUpto(member.DOJ, member.duration) === formatDate(filterValidUpto));
+        }
+
+        setFilteredMembers(filtered);
+    }, [searchQuery, filterVerified, filterGender, filterDuration, filterDOJ, filterValidUpto, members]);
+
+    const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
+    const [pin, setPin] = useState('');
+    const correctPin = '191800';
+
     useEffect(() => {
         let filtered = members;
 
@@ -46,7 +83,7 @@ const Dashboard = () => {
     }, [searchQuery, members]);
 
     // Sort function
-    const handleSort = (field) => {
+    const handleSort = (field: string) => {
         const isAsc = sortBy.field === field && sortBy.order === 'asc';
         const order = isAsc ? 'desc' : 'asc';
 
@@ -83,29 +120,23 @@ const Dashboard = () => {
         }
     };
 
-    const handleDeleteClick = (member) => {
+    const handleDeleteClick = (member: any) => {
         setMemberToDelete(member);
         setShowDeleteDialog(true);
     };
 
-    const handleEdit = (id) => {
-        const memberToEdit = members.find(member => member._id === id);
-        setSelectedMember(memberToEdit);
-        setShowModal(true);
-    };
-
-    const handlePreview = (member) => {
+    const handlePreview = (member: any) => {
         setSelectedMember(member);
         setShowModal(true);
     };
 
-    const calculateValidUpto = (DOJ, duration) => {
+    const calculateValidUpto = (DOJ: string | number | Date, duration: number) => {
         const joiningDate = new Date(DOJ);
         joiningDate.setMonth(joiningDate.getMonth() + duration);
         return joiningDate.toLocaleDateString('en-GB');
     };
 
-    const formatDate = (date) => {
+    const formatDate = (date: string | number | Date) => {
         return new Date(date).toLocaleDateString('en-GB');
     };
 
@@ -124,18 +155,50 @@ const Dashboard = () => {
         XLSX.writeFile(workbook, 'members.xlsx');
     };
 
+
     return (
         <div className="max-w-6xl mx-auto p-6">
             <h2 className="text-3xl text-center font-bold mb-6">Dream Fitness Members</h2>
 
-            {/* Search */}
-            <div className="flex justify-between mb-4">
+            <div className="flex flex-wrap gap-4 mb-4">
+                {/* Search Input */}
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by name"
                     className="border rounded-md w-1/3 p-2"
+                />
+
+                {/* Verified/Unverified Filter */}
+                <select
+                    value={filterVerified}
+                    onChange={(e) => setFilterVerified(e.target.value)}
+                    className="border rounded-md p-2"
+                >
+                    <option value="">All</option>
+                    <option value="verified">Verified</option>
+                    <option value="unverified">Unverified</option>
+                </select>
+
+                {/* Gender Filter */}
+                <select
+                    value={filterGender}
+                    onChange={(e) => setFilterGender(e.target.value)}
+                    className="border rounded-md p-2"
+                >
+                    <option value="">All Genders</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+
+                {/* Duration Filter */}
+                <input
+                    type="number"
+                    value={filterDuration}
+                    onChange={(e) => setFilterDuration(e.target.value)}
+                    placeholder="Filter by duration"
+                    className="border rounded-md p-2 w-32"
                 />
                 <div >
                     <button
@@ -175,7 +238,7 @@ const Dashboard = () => {
                     <tbody>
                         {filteredMembers.length > 0 ? (
                             filteredMembers.map((member) => (
-                                <tr key={member._id} className="border-t hover:bg-gray-100 transition-all">
+                                <tr key={member._id} className={`${member?.verified ? "bg-green-100" : "bg-red-200"} transition-all`} >
                                     <td className="py-3 px-4">{member?.serialNumber || 'N/A'}</td>
                                     <td className="py-3 px-4">{member?.name || 'N/A'}</td>
                                     <td className="py-3 px-4">{member?.email || 'N/A'}</td>
@@ -183,11 +246,10 @@ const Dashboard = () => {
                                     <td className="py-3 px-4">{formatDate(member?.DOJ)}</td>
                                     <td className="py-3 px-4">{calculateValidUpto(member?.DOJ, member?.duration)}</td>
                                     <td className="py-3 px-4 flex gap-2 space-x-2">
-                                        <HiPencilSquare
+                                        <Link href={`/members/${member._id}`}><HiPencilSquare
                                             size={25}
                                             className="text-blue-600 cursor-pointer"
-                                            onClick={() => handleEdit(member._id)}
-                                        />
+                                        /></Link>
                                         <MdOutlineDeleteForever
                                             onClick={() => handleDeleteClick(member)}
                                             size={25}
@@ -212,46 +274,50 @@ const Dashboard = () => {
                 </table>
             </div>
 
-            {showModal && selectedMember && (
-                <InvoiceModal member={selectedMember} setShowModal={setShowModal} setSelectedMember={setSelectedMember} />
-            )}
+            {
+                showModal && selectedMember && (
+                    <InvoiceModal member={selectedMember} setShowModal={setShowModal} setSelectedMember={setSelectedMember} />
+                )
+            }
 
-            {showDeleteDialog && memberToDelete && (
-                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
-                        <p>Are you sure you want to delete {memberToDelete.name}?</p>
-                        <div className="mt-4">
-                            <label htmlFor="pin" className="block mb-2">Enter PIN:</label>
-                            <input
-                                type="password"
-                                id="pin"
-                                value={pin}
-                                onChange={(e) => setPin(e.target.value)}
-                                className="border p-2 rounded-md w-full"
-                            />
-                        </div>
-                        <div className="mt-4 flex justify-end space-x-2">
-                            <button
-                                className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
-                                onClick={() => {
-                                    setShowDeleteDialog(false);
-                                    setPin(''); // Clear PIN on cancel
-                                }}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
-                                onClick={confirmDeleteMember}
-                            >
-                                Delete
-                            </button>
+            {
+                showDeleteDialog && memberToDelete && (
+                    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                        <div className="bg-white p-6 rounded-lg shadow-lg">
+                            <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+                            <p>Are you sure you want to delete {memberToDelete.name}?</p>
+                            <div className="mt-4">
+                                <label htmlFor="pin" className="block mb-2">Enter PIN:</label>
+                                <input
+                                    type="password"
+                                    id="pin"
+                                    value={pin}
+                                    onChange={(e) => setPin(e.target.value)}
+                                    className="border p-2 rounded-md w-full"
+                                />
+                            </div>
+                            <div className="mt-4 flex justify-end space-x-2">
+                                <button
+                                    className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+                                    onClick={() => {
+                                        setShowDeleteDialog(false);
+                                        setPin(''); // Clear PIN on cancel
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+                                    onClick={confirmDeleteMember}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

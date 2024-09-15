@@ -96,7 +96,7 @@ function RegisterForm() {
 
             <form
                 onSubmit={handleSubmit}
-                className="sm:grid sm:grid-cols-2 border-2 border-orange-400 rounded-xl gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-lg"
+                className="sm:grid sm:grid-cols-2 border-2 rounded-xl gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-lg"
             >
                 <div className="col-span-1">
                     <input
