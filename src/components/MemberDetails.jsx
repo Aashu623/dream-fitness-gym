@@ -37,6 +37,7 @@ const memberSchema = z.object({
 
 function MemberDetailsPage() {
   const { id } = useParams();
+  const router = useRouter();
   const { data: member, isLoading, isError } = useGetMemberByIdQuery(id);
   const [updateMember] = useUpdateMemberMutation();
 
@@ -117,9 +118,11 @@ function MemberDetailsPage() {
         updatedData: { ...formData },
       }).unwrap();
       toast.success("Member updated successfully!");
+
       setIsEditing(false);
       setShowDeleteDialog(false);
       setPin("");
+      router.push("/dashboard");
     } catch (error) {
       toast.error("Failed to update member!");
       setShowDeleteDialog(false);
