@@ -10,11 +10,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      {isLoading ? <Skeleton /> : (
-        <div className="min-h-screen bg-gray-100">
-          <Dashboard />
-        </div >
-      )}
+      {isLoading ? <Skeleton /> : (<Dashboard />)}
     </>
   );
 }

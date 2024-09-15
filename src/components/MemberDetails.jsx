@@ -37,14 +37,16 @@ const memberSchema = z.object({
 
 function MemberDetailsPage() {
   const { id } = useParams();
-  const router = useRouter();
-  const { data: member, isLoading, isError } = useGetMemberByIdQuery(id);
-  const [updateMember] = useUpdateMemberMutation();
+  const {
+    data: member,
+    isLoading: feching,
+    isError,
+  } = useGetMemberByIdQuery(id);
+  const [updateMember, isLoading] = useUpdateMemberMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [pin, setPin] = useState("");
-  const [memberToUpdate, setMemberToUpdate] = useState(null);
   const [formData, setFormData] = useState({
     serialNumber: 0,
     name: "",
@@ -77,7 +79,7 @@ function MemberDetailsPage() {
         paymentMode: member.paymentMode,
         utr: member.utr || "",
         receiverName: member.receiverName || "",
-        amount: member.amount,
+        amount: parseInt(member.amount),
         verified: member.verified,
       });
     }
@@ -94,7 +96,6 @@ function MemberDetailsPage() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    setMemberToUpdate(formData);
     setShowDeleteDialog(true);
   };
 
@@ -111,7 +112,6 @@ function MemberDetailsPage() {
       });
       return;
     }
-    console.log(formData);
     try {
       await updateMember({
         id,
@@ -130,7 +130,8 @@ function MemberDetailsPage() {
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (e) => {
+    e.preventDefault();
     setIsEditing(true);
   };
 
@@ -144,14 +145,22 @@ function MemberDetailsPage() {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (feching)
+    return (
+      <div className="min-w-screen min-h-screen flex items-center justify-center">
+        <div className="loader"></div>
+      </div>
+    );
   if (isError) return <p>Error loading member details</p>;
 
   return (
     <div className="w-full form-contianer overflow-auto">
       <Toaster position="bottom-center" />
 
-      <form className="sm:grid sm:grid-cols-2 border-2 rounded-xl gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-lg overflow-y-auto">
+      <form
+        onSubmit={handleEdit}
+        className="sm:grid sm:grid-cols-2 border-2 rounded-xl gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-lg overflow-y-auto"
+      >
         <div className="col-span-1">
           <input
             type="text"
@@ -281,17 +290,77 @@ function MemberDetailsPage() {
             >
               Select duration
             </option>
-            <option value="1" className="bg-transparent text-orange-500">
-              1 Month
+            <option
+              value={1}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              1 month
             </option>
-            <option value="3" className="bg-transparent text-orange-500">
-              3 Months
+            <option
+              value={2}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              2 months
             </option>
-            <option value="6" className="bg-transparent text-orange-500">
-              6 Months
+            <option
+              value={3}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              3 months
             </option>
-            <option value="12" className="bg-transparent text-orange-500">
-              12 Months
+            <option
+              value={4}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              4 months
+            </option>
+            <option
+              value={5}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              5 months
+            </option>
+            <option
+              value={6}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              6 months
+            </option>
+            <option
+              value={7}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              7 months
+            </option>
+            <option
+              value={8}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              8 months
+            </option>
+            <option
+              value={9}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              9 months
+            </option>
+            <option
+              value={10}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              10 months
+            </option>
+            <option
+              value={11}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              11 months
+            </option>
+            <option
+              value={12}
+              className="bg-transparent font-semibold text-orange-500"
+            >
+              12 months (yearly)
             </option>
           </select>
         </div>
@@ -399,7 +468,7 @@ function MemberDetailsPage() {
             </>
           ) : (
             <button
-              type="button"
+              type="submit"
               className="bg-blue-500 text-white py-2 px-4 rounded"
               onClick={handleEdit}
             >
