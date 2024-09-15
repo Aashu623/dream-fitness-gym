@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { useAddMemberMutation, useGetAllMembersQuery } from "@/redux/slice/membersApiSlice";
 import { z } from "zod";
+import Loader from '@/components/Loader'
 
 // Define Zod schema matching memberSchema from mongoose
 const memberSchema = z.object({
@@ -27,7 +28,7 @@ function RegisterForm() {
     const router = useRouter();
     const { data: members } = useGetAllMembersQuery();
     const [addMember] = useAddMemberMutation();
-
+    const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [gender, setGender] = useState("");
@@ -53,7 +54,7 @@ function RegisterForm() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-
+        setLoading(true)
         // Gather form data
         const formData = {
             serialNumber,
@@ -84,14 +85,15 @@ function RegisterForm() {
         try {
             await addMember(formData).unwrap();
             toast.success("Member added successfully!");
+            setLoading(false)
             router.push("/dashboard");
         } catch (error) {
+            setLoading(false)
             toast.error("Failed to add member!");
         }
     };
-
     return (
-        <div className="w-full">
+        <>{loading ? (<Loader />) : <div className="w-full">
             <Toaster position="bottom-center" />
 
             <form
@@ -192,7 +194,7 @@ function RegisterForm() {
                         onChange={(e) => setDuration(parseInt(e.target.value))}
                         required
                     >
-                        <option value="" className="bg-transparent font-semibold text-orange-500">Select membership type</option>
+                        <option value="" className="bg-transparent font-semibold text-orange-500">Select duration</option>
                         <option value={1} className="bg-transparent font-semibold text-orange-500">1 month</option>
                         <option value={2} className="bg-transparent font-semibold text-orange-500">2 months</option>
                         <option value={3} className="bg-transparent font-semibold text-orange-500">3 months</option>
@@ -286,6 +288,8 @@ function RegisterForm() {
                 </div>
             </form>
         </div>
+        }</>
+
     );
 }
 

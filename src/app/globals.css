@@ -20,7 +20,7 @@
   }
 }
 
-.form-contianer::before {
+body::before {
   content: "";
   color: #000;
   position: absolute;
@@ -28,13 +28,12 @@
   width: 100%;
   z-index: -1;
   background: url("../assets/bg-5.jpg") no-repeat center/cover;
-  background-blend-mode: saturation;
 }
 
 form {
   background-color: rgba(0, 0, 0, 0.495);
 }
-/* HTML: <div class="loader"></div> */
+
 .loader {
   --c: no-repeat linear-gradient(orange 0 0);
   background: var(--c), var(--c), var(--c), var(--c), var(--c), var(--c),
