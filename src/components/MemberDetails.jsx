@@ -6,8 +6,7 @@ import {
   useGetMemberByIdQuery,
   useUpdateMemberMutation,
 } from "@/redux/slice/membersApiSlice";
-import { string, z } from "zod";
-import { Member } from "@/lib/member.model";
+import { z } from "zod";
 
 // Define Zod schema matching memberSchema from mongoose
 const memberSchema = z.object({
@@ -36,10 +35,14 @@ const memberSchema = z.object({
 });
 
 function MemberDetailsPage() {
-  const { id } = useParams();
   const router = useRouter();
-  const { data: member, isLoading, isError } = useGetMemberByIdQuery(id);
-  const [updateMember] = useUpdateMemberMutation();
+  const { id } = useParams();
+  const {
+    data: member,
+    isLoading: feching,
+    isError,
+  } = useGetMemberByIdQuery(id);
+  const [updateMember, { isLoading: updating }] = useUpdateMemberMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -114,12 +117,12 @@ function MemberDetailsPage() {
         id,
         updatedData: { ...formData },
       }).unwrap();
-      toast.success("Member updated successfully!");
 
       setIsEditing(false);
       setShowDeleteDialog(false);
       setPin("");
       router.push("/dashboard");
+      toast.success("Member updated successfully!");
     } catch (error) {
       toast.error("Failed to update member!");
       setShowDeleteDialog(false);
@@ -489,6 +492,7 @@ function MemberDetailsPage() {
               <div className="flex justify-end mt-4 gap-3">
                 <button
                   className="bg-green-500 text-white py-2 px-4 rounded"
+                  disabled={updating ? true : false}
                   onClick={handleConfirmUpdate}
                 >
                   Confirm

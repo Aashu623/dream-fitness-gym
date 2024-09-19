@@ -20,11 +20,11 @@ const Dashboard = () => {
     const [deleteMember] = useDeleteMemberMutation();
     const [filteredMembers, setFilteredMembers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filterVerified, setFilterVerified] = useState(''); // For verified/unverified
-    const [filterGender, setFilterGender] = useState(''); // For male/female
-    const [filterDuration, setFilterDuration] = useState(''); // For duration
-    const [filterDOJ, setFilterDOJ] = useState(''); // For Date of Joining
-    const [filterValidUpto, setFilterValidUpto] = useState(''); // For Valid Upto
+    const [filterVerified, setFilterVerified] = useState('');
+    const [filterGender, setFilterGender] = useState('');
+    const [filterDuration, setFilterDuration] = useState('');
+    const [filterDOJ, setFilterDOJ] = useState('');
+    const [filterValidUpto, setFilterValidUpto] = useState('');
 
     useEffect(() => {
         let filtered = members;
