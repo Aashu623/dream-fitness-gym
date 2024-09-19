@@ -27,7 +27,7 @@ const memberSchema = z.object({
 function RegisterForm() {
     const router = useRouter();
     const { data: members } = useGetAllMembersQuery();
-    const [addMember] = useAddMemberMutation();
+    const [addMember, { isLoading: adding }] = useAddMemberMutation();
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -281,7 +281,8 @@ function RegisterForm() {
                 <div className="col-span-2">
                     <button
                         type="submit"
-                        className="bg-orange-600 hover:bg-orange-700 duration-500 transition-all text-white w-full py-2 px-3"
+                        disabled={adding}
+                        className="bg-orange-600 hover:bg-white hover:text-orange-600 duration-200 transition-all text-white w-full py-2 px-3"
                     >
                         Register
                     </button>
