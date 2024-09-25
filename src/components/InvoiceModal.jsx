@@ -4,11 +4,7 @@ import html2canvas from "html2canvas";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
 
-export default function InvoiceModal({
-  member,
-  setShowModal,
-  setSelectedMember,
-}) {
+export default function InvoiceModal({ member, setShowModal }) {
   const handleDownloadPDF = () => {
     const modalElement = document.getElementById("invoice-modal");
     document
@@ -54,7 +50,6 @@ export default function InvoiceModal({
 
   const closeModal = () => {
     setShowModal(false);
-    setSelectedMember(null);
   };
 
   const formatDate = (date) => {
@@ -88,9 +83,21 @@ export default function InvoiceModal({
               Joining Date: <strong>{formatDate(member?.DOJ)}</strong>
             </p>
             <p className="text-sm">
-              Renew On :{" "}
+              Valid From:{" "}
               <strong>
-                {calculateValidUpto(member?.DOJ, member?.duration)}
+                {formatDate(
+                  member?.planStarted ? member.planStarted : member?.DOJ
+                )}
+              </strong>
+            </p>
+
+            <p className="text-sm">
+              Valid Till:{" "}
+              <strong>
+                {calculateValidUpto(
+                  member?.planStarted ? member.planStarted : member?.DOJ,
+                  member?.duration
+                )}
               </strong>
             </p>
           </div>
@@ -149,7 +156,10 @@ export default function InvoiceModal({
             <li>All payments are non-refundable.</li>
             <li>Memberships are valid only for the duration specified.</li>
             <li>Please keep this invoice for your records.</li>
-            <li>Contact us at dreamfittnessgym@gmail.com for any queries or issues.</li>
+            <li>
+              Contact us at dreamfittnessgym@gmail.com for any queries or
+              issues.
+            </li>
           </ul>
         </div>
 

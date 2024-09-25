@@ -17,6 +17,7 @@ const memberSchema = new Schema({
   verified: { type: Boolean, default: false },
   amount: { type: String, required: true },
   DOJ: { type: Date, required: true },
+  planStarted: { type: Date },
 });
 
 const Member = models.Member || model("Member", memberSchema);

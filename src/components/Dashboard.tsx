@@ -1,13 +1,10 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useGetAllMembersQuery, useDeleteMemberMutation } from '@/redux/slice/membersApiSlice';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
-
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import { FaFileDownload } from "react-icons/fa";
 import InvoiceModal from './InvoiceModal';
 import Link from 'next/link';
 
@@ -140,6 +137,13 @@ const Dashboard = () => {
         return new Date(date).toLocaleDateString('en-GB');
     };
 
+    const isExpiringSoon = (validUpto: string) => {
+        const validDate = new Date(validUpto);
+        const today = new Date();
+        const differenceInDays = Math.ceil((validDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+        return differenceInDays <= 5;
+    };
+
     const handleDownloadExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(
             filteredMembers.map((member) => ({
@@ -157,130 +161,135 @@ const Dashboard = () => {
 
 
     return (
-        <div className="p-8 bg-orange-100 min-h-screen flex justify-center">
-            <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg overflow-hidden">
-                <h2 className="text-3xl text-center font-bold mb-6">Dream Fitness Members</h2>
+        <div className="py-8 bg-orange-100 min-h-screen flex justify-center">
+            <div className="flex mx-auto p-6 bg-white shadow-lg rounded-lg overflow-hidden gap-2">
 
-                <div className="flex flex-wrap gap-4 mb-4">
-                    {/* Search Input */}
+                <div className="flex flex-col gap-4 mb-4">
                     <input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search by name"
-                        className="border rounded-md w-1/3 p-2"
+                        className="border rounded-md w-full p-2"
                     />
 
-                    {/* Verified/Unverified Filter */}
                     <select
                         value={filterVerified}
                         onChange={(e) => setFilterVerified(e.target.value)}
-                        className="border rounded-md p-2"
+                        className="border rounded-md p-2 w-full"
                     >
                         <option value="">All</option>
                         <option value="verified">Verified</option>
                         <option value="unverified">Unverified</option>
                     </select>
 
-                    {/* Gender Filter */}
                     <select
                         value={filterGender}
                         onChange={(e) => setFilterGender(e.target.value)}
-                        className="border rounded-md p-2"
+                        className="border rounded-md p-2 w-full"
                     >
                         <option value="">All Genders</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                     </select>
 
-                    {/* Duration Filter */}
                     <input
                         type="number"
                         value={filterDuration}
                         onChange={(e) => setFilterDuration(e.target.value)}
                         placeholder="Filter by duration"
-                        className="border rounded-md p-2 w-32"
+                        className="border rounded-md p-2 w-32 w-full"
                     />
-                    <div >
-                        <button
-                            onClick={handleDownloadExcel}
-                            className="bg-green-500 text-white px-4 p-2 rounded-md hover:bg-green-600 transition-colors"
-                        >
-                            Download Excel
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleDownloadExcel}
+                        className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
+                    >
+                        Download Excel
+                    </button>
+                    <Link href="/register"><button
+                        onClick={handleDownloadExcel}
+                        className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
+                    >
+                        New Member
+                    </button></Link>
                 </div>
-
-                {/* Button to download Excel */}
 
                 <div className="overflow-x-auto max-h-[75vh]">
                     <table className="min-w-full bg-white shadow-md rounded-md overflow-hidden">
                         <thead className="bg-gray-200 sticky top-0 z-10">
                             <tr>
                                 <th
-                                    className="py-3 px-4 cursor-pointer"
-                                    onClick={() => handleSort('serialNumber')}
+                                    className="py-3 px-2 cursor-pointer"
                                 >
-                                    Sr. No. {'↑↓'}
+                                    Verified
                                 </th>
                                 <th
-                                    className="py-3 px-4 cursor-pointer"
+                                    className="py-3 px-2 cursor-pointer"
+                                    onClick={() => handleSort('serialNumber')}
+                                >
+                                    SN {'↑↓'}
+                                </th>
+                                <th
+                                    className="py-3 px-2 cursor-pointer"
                                     onClick={() => handleSort('name')}
                                 >
                                     Name {'↑↓'}
                                 </th>
-                                <th className="py-3 px-4">Email</th>
-                                <th className="py-3 px-4">Phone</th>
-                                <th className="py-3 px-4">Date of Joining</th>
-                                <th className="py-3 px-4">Valid Upto</th>
-                                <th className="py-3 px-4">Actions</th>
+                                <th className="py-3 px-2">Email</th>
+                                <th className="py-3 px-2">Phone</th>
+                                <th className="py-3 px-2">Date of Joining</th>
+                                <th className="py-3 px-2">Valid Upto</th>
+                                <th className="py-3 px-2">Invoice</th>
+                                <th className="py-3 px-2">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {filteredMembers.length > 0 ? (
-                                filteredMembers.map((member) => (
-                                    <tr key={member._id} className={`${member?.verified ? "bg-green-100" : "bg-red-200"} transition-all`} >
-                                        <td className="py-3 px-4">{member?.serialNumber || 'N/A'}</td>
-                                        <td className="py-3 px-4">{member?.name || 'N/A'}</td>
-                                        <td className="py-3 px-4">{member?.email || 'N/A'}</td>
-                                        <td className="py-3 px-4">{member?.phone || 'N/A'}</td>
-                                        <td className="py-3 px-4">{formatDate(member?.DOJ)}</td>
-                                        <td className="py-3 px-4">{calculateValidUpto(member?.DOJ, member?.duration)}</td>
-                                        <td className="py-3 px-4 flex gap-2 space-x-2">
-                                            <Link href={`/members/${member._id}`}><HiPencilSquare
-                                                size={25}
-                                                className="text-blue-600 cursor-pointer"
-                                            /></Link>
-                                            <MdOutlineDeleteForever
-                                                onClick={() => handleDeleteClick(member)}
-                                                size={25}
-                                                className="text-red-600 cursor-pointer"
-                                            />
-                                            <FaFileDownload
-                                                onClick={() => handlePreview(member)}
-                                                size={25}
-                                                className="text-green-600 cursor-pointer"
-                                            />
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td className="text-center py-4">
-                                        No members found
+                        <tbody className="divide-y">
+                            {filteredMembers.map((member, index) => (
+                                <tr key={index} className={isExpiringSoon(calculateValidUpto(member.DOJ, member.duration)) ? 'bg-yellow-200' : ''}>
+                                    <td className="py-3 px-2 text-center"><input
+                                        type="checkbox"
+                                        checked={member.verified}
+                                    /></td>
+                                    <td className="py-3 px-2 text-center">{member.serialNumber}</td>
+                                    <td className="py-3 px-2">{member.name}</td>
+                                    <td className="py-3 px-2">{member.email}</td>
+                                    <td className="py-3 px-2 text-center">{member.phone}</td>
+                                    <td className="py-3 px-2 text-center">{formatDate(member.DOJ)}</td>
+                                    <td className="py-3 px-2 text-center">{calculateValidUpto(member.DOJ, member.duration)}</td>
+                                    <td className="py-3 px-2 text-center">
+                                        <button
+                                            className="text-blue-500 hover:text-blue-700"
+                                            onClick={() => handlePreview(member)}
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                    <td className="py-3 px-2 flex gap-2">
+                                        <Link
+                                            href={`/members/${member._id}`}
+                                            className="text-2xl text-green-500 hover:text-green-700"
+                                        >
+                                            <HiPencilSquare />
+                                        </Link>
+                                        <button
+                                            className="text-2xl text-red-500 hover:text-red-700"
+                                            onClick={() => handleDeleteClick(member)}
+                                        >
+                                            <MdOutlineDeleteForever />
+                                        </button>
                                     </td>
                                 </tr>
-                            )}
+                            ))}
                         </tbody>
                     </table>
                 </div>
 
-                {
-                    showModal && selectedMember && (
-                        <InvoiceModal member={selectedMember} setShowModal={setShowModal} setSelectedMember={setSelectedMember} />
-                    )
-                }
-
+                {showModal && (
+                    <InvoiceModal
+                        member={selectedMember}
+                        setShowModal={setShowModal}
+                    />
+                )}
                 {
                     showDeleteDialog && memberToDelete && (
                         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
@@ -299,7 +308,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="mt-4 flex justify-end space-x-2">
                                     <button
-                                        className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+                                        className="bg-gray-300 text-black px-2 py-2 rounded-md hover:bg-gray-400 transition-colors"
                                         onClick={() => {
                                             setShowDeleteDialog(false);
                                             setPin(''); // Clear PIN on cancel
@@ -308,7 +317,7 @@ const Dashboard = () => {
                                         Cancel
                                     </button>
                                     <button
-                                        className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+                                        className="bg-red-500 text-white px-2 py-2 rounded-md hover:bg-red-600 transition-colors"
                                         onClick={confirmDeleteMember}
                                     >
                                         Delete
@@ -318,8 +327,8 @@ const Dashboard = () => {
                         </div>
                     )
                 }
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 
