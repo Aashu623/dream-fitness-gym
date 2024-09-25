@@ -206,12 +206,13 @@ const Dashboard = () => {
                     >
                         Download Excel
                     </button>
-                    <Link href="/register"><button
-                        onClick={handleDownloadExcel}
-                        className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
-                    >
-                        New Member
-                    </button></Link>
+                    <Link href="/register">
+                        <button
+                            className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
+                        >
+                            New Member
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="overflow-x-auto max-h-[75vh]">
