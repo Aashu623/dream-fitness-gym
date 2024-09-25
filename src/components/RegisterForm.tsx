@@ -55,7 +55,6 @@ function RegisterForm() {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         setLoading(true)
-        // Gather form data
         const formData = {
             serialNumber,
             name,
@@ -70,7 +69,8 @@ function RegisterForm() {
             utr: paymentMode === "upi" ? utr : undefined,
             receiverName: paymentMode === "cash" ? receiverName : undefined,
             amount: parseFloat(amount),
-            DOJ: new Date(DOJ), // Set DOJ to selected date
+            DOJ: new Date(DOJ),
+            planStarted: new Date(DOJ),
         };
 
         // Validate formData using Zod schema
