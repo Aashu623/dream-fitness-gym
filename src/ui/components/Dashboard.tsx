@@ -21,7 +21,7 @@ const Stats = () => {
     totalMembers: 0,
     maleMembers: 0,
     femaleMembers: 0,
-    durationCounts: Array(12).fill(0) // Initialize for 12 months
+    durationCounts: Array(12).fill(0)
   });
 
   useEffect(() => {
@@ -29,11 +29,10 @@ const Stats = () => {
       const maleMembers = members.filter(member => member.gender === 'male').length;
       const femaleMembers = members.filter(member => member.gender === 'female').length;
 
-      // Reset durationCounts for 12 months
       const durationCounts = Array(12).fill(0);
       members.forEach(member => {
         if (member.duration >= 1 && member.duration <= 12) {
-          durationCounts[member.duration - 1] += 1; // Count for the corresponding month
+          durationCounts[member.duration - 1] += 1;
         }
       });
 
@@ -57,7 +56,6 @@ const Stats = () => {
     ]
   };
 
-  // Prepare plan data: filter out zero counts
   const filteredDurationCounts = statistics.durationCounts
     .map((count, index) => (count > 0 ? { count, label: `${index + 1} Month${index + 1 > 1 ? 's' : ''}` } : null))
     .filter(Boolean);
@@ -75,7 +73,7 @@ const Stats = () => {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="w-1/6 bg-orange-600 text-white p-6">
+      <aside className="w-1/6 bg-gray-600 text-white p-6">
         <nav className="flex flex-col space-y-4">
           <h2 className="text-xl font-bold">Dashboard</h2>
           <Link href="/member/register">
@@ -93,19 +91,19 @@ const Stats = () => {
         </nav>
       </aside>
 
-      <div className="flex-1 bg-orange-300 p-6">
+      <div className="flex-1 bg-orange-50 p-6">
         <h1 className="text-2xl font-bold mb-6 text-center">Dream Fitness</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="p-4 bg-orange-500 text-white rounded-lg shadow-lg text-center">
+          <div className="p-4 bg-orange-400 text-white rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-semibold">Total Members</h2>
             <span className="text-3xl font-bold">{statistics.totalMembers}</span>
           </div>
-          <div className="p-4 bg-orange-500 text-white rounded-lg shadow-lg text-center">
+          <div className="p-4 bg-orange-400 text-white rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-semibold">Male Members</h2>
             <span className="text-3xl font-bold">{statistics.maleMembers}</span>
           </div>
-          <div className="p-4 bg-orange-500 text-white rounded-lg shadow-lg text-center">
+          <div className="p-4 bg-orange-400 text-white rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-semibold">Female Members</h2>
             <span className="text-3xl font-bold">{statistics.femaleMembers}</span>
           </div>
@@ -133,7 +131,7 @@ const Stats = () => {
 
         <div className="mt-8 text-center">
           <Link href="/dashboard/members">
-            <span className="bg-orange-500 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-orange-600 transition-all">
+            <span className="bg-orange-400 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-orange-600 transition-all">
               View All Members
             </span>
           </Link>
