@@ -122,17 +122,17 @@ const Stats = () => {
           </Link>
         </nav>
         <div className='flex flex-col gap-4 py-6'>
-          <div className="p-4 bg-orange-400 text-black rounded-lg shadow-lg text-center">
+          <div className="p-4 bg-orange-400 text-white rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-semibold">Total Amount Collected</h2>
             <span className="text-3xl font-bold">₹{statistics.totalAmount}</span>
           </div>
-          <div className="bg-orange-400 text-black p-6 rounded-lg shadow-lg">
+          <div className="bg-orange-400 text-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Filter by Joining Date</h2>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-black">
               <input
                 type="date"
                 name="startDate"
-                className="p-2 border rounded"
+                className="p-2 border rounded "
                 value={dateRange.startDate}
                 onChange={handleDateChange}
                 placeholder="Start Date"
@@ -145,7 +145,7 @@ const Stats = () => {
                 onChange={handleDateChange}
                 placeholder="End Date"
               />
-              <div className="text-lg">
+              <div className="text-lg text-white">
                 <strong>Total Collection (in selected range): </strong>₹{totalAmountByDate}
               </div>
             </div>
