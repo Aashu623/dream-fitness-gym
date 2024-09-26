@@ -32,7 +32,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/app/layout.js", "src/api/membersApiSlice.js", "src/components/InvoiceModal.jsx", "src/components/MemberDetails.jsx"  ],
+, "src/app/layout.js", "src/api/membersApiSlice.js", "src/ui/components/InvoiceModal.tsx", "src/ui/components/MemberDetails.tsx"  ],
   "exclude": [
     "node_modules"
   ]

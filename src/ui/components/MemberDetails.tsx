@@ -8,7 +8,6 @@ import {
 } from "@/redux/slice/membersApiSlice";
 import { z } from "zod";
 
-// Define Zod schema matching memberSchema from mongoose
 const memberSchema = z.object({
   serialNumber: z.number(),
   name: z.string().min(1, "Name is required"),
@@ -61,7 +60,7 @@ const InputField = ({
 
 function MemberDetailsPage() {
   const router = useRouter();
-  const { id } = useParams();
+  const { id }:{id:string} = useParams();
   const {
     data: member,
     isLoading: fetching,
@@ -105,7 +104,7 @@ function MemberDetailsPage() {
         paymentMode: member.paymentMode,
         utr: member.utr || "",
         receiverName: member.receiverName || "",
-        amount: parseFloat(member.amount),
+        amount: member.amount,
         verified: member.verified,
         planStarted: member.planStarted
           ? new Date(member.planStarted).toISOString().split("T")[0]
@@ -147,8 +146,8 @@ function MemberDetailsPage() {
     }
     try {
       await updateMember({
-        id,
-        updatedData: { ...formData },
+        id:id,
+        updatedData: { ...formData,planStarted: new Date(formData.planStarted) },
       }).unwrap();
 
       setIsEditing(false);
@@ -190,7 +189,7 @@ function MemberDetailsPage() {
           paymentMode: member.paymentMode,
           utr: member.utr || "",
           receiverName: member.receiverName || "",
-          amount: parseFloat(member.amount),
+          amount: member.amount,
           verified: member.verified,
           planStarted: member.planStarted
             ? new Date(member.planStarted).toISOString().split("T")[0]
@@ -247,6 +246,7 @@ function MemberDetailsPage() {
             value={formData.email}
             onChange={handleChange}
             readOnly={!isEditing}
+            required={true}
           />
         </div>
 
@@ -313,6 +313,7 @@ function MemberDetailsPage() {
             value={formData.emergencyContact}
             onChange={handleChange}
             readOnly={!isEditing}
+            required={true}
           />
         </div>
         <div className="col-span-2">
@@ -323,6 +324,7 @@ function MemberDetailsPage() {
             value={formData.address}
             onChange={handleChange}
             readOnly={!isEditing}
+            required={false}
           />
         </div>
 
@@ -403,6 +405,7 @@ function MemberDetailsPage() {
               value={formData.utr}
               onChange={handleChange}
               readOnly={!isEditing}
+              required={false}
             />
           </div>
         )}
@@ -416,6 +419,7 @@ function MemberDetailsPage() {
               value={formData.receiverName}
               onChange={handleChange}
               readOnly={!isEditing}
+              required={false}
             />
           </div>
         )}

@@ -1,9 +1,7 @@
 'use client'
 import { useGetAllMembersQuery } from '@/redux/slice/membersApiSlice';
-import Dashboard from '../../components/Dashboard';
-import Skeleton from '@/components/Skeleton'
-
-
+import Dashboard from '@/ui/components/Dashboard';
+import Skeleton from '@/ui/skeletons/Dashboard'
 export default function DashboardPage() {
   const { isLoading } = useGetAllMembersQuery();
 
