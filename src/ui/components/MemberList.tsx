@@ -194,7 +194,7 @@ const MemberList = () => {
                     >
                         Download Excel
                     </button>
-                    <Link href="/register">
+                    <Link href="/member/register">
                         <button
                             className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
                         >

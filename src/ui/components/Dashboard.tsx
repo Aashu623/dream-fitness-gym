@@ -78,7 +78,7 @@ const Stats = () => {
       <aside className="w-1/6 bg-orange-600 text-white p-6">
         <nav className="flex flex-col space-y-4">
           <h2 className="text-xl font-bold">Dashboard</h2>
-          <Link href="/dashboard/register">
+          <Link href="/member/register">
             <span className="hover:text-gray-300 cursor-pointer">Register</span>
           </Link>
           <Link href="/dashboard/members">

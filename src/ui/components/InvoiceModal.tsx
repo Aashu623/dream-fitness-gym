@@ -9,7 +9,7 @@ export default function InvoiceModal({ member, setShowModal }) {
     const modalElement = document.getElementById("invoice-modal");
     document
       .querySelectorAll(".no-print")
-      .forEach((el) => (el.style.display = "none"));
+      .forEach((el) => ((el as HTMLElement).style.display = "none"));
 
     if (modalElement) {
       html2canvas(modalElement, { scale: 1.2 })
@@ -41,7 +41,7 @@ export default function InvoiceModal({ member, setShowModal }) {
         .finally(() => {
           document
             .querySelectorAll(".no-print")
-            .forEach((el) => (el.style.display = ""));
+            .forEach((el) => ((el as HTMLElement).style.display = ""));
         });
     } else {
       console.error("Modal element not found");
