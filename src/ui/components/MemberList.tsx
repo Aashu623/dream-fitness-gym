@@ -5,10 +5,12 @@ import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import InvoiceModal from './InvoiceModal';
+import InvoiceModal from '@/ui/components/InvoiceModal';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const Dashboard = () => {
+const MemberList = () => {
+    const router = useRouter(); 
     const [selectedMember, setSelectedMember] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -67,19 +69,6 @@ const Dashboard = () => {
     const [pin, setPin] = useState('');
     const correctPin = '191800';
 
-    useEffect(() => {
-        let filtered = members;
-
-        if (searchQuery) {
-            filtered = filtered.filter(member =>
-                member.name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        }
-
-        setFilteredMembers(filtered);
-    }, [searchQuery, members]);
-
-    // Sort function
     const handleSort = (field: string) => {
         const isAsc = sortBy.field === field && sortBy.order === 'asc';
         const order = isAsc ? 'desc' : 'asc';
@@ -108,7 +97,7 @@ const Dashboard = () => {
                 toast.success('Member deleted successfully');
                 setShowDeleteDialog(false);
                 setMemberToDelete(null);
-                setPin(''); // Reset PIN input
+                setPin('');
             } catch (error) {
                 toast.error('Failed to delete member');
             }
@@ -159,7 +148,6 @@ const Dashboard = () => {
         XLSX.writeFile(workbook, 'members.xlsx');
     };
 
-
     return (
         <div className="py-8 bg-orange-100 min-h-screen flex justify-center">
             <div className="flex mx-auto p-6 bg-white shadow-lg rounded-lg overflow-hidden gap-2">
@@ -198,7 +186,7 @@ const Dashboard = () => {
                         value={filterDuration}
                         onChange={(e) => setFilterDuration(e.target.value)}
                         placeholder="Filter by duration"
-                        className="border rounded-md p-2 w-32 w-full"
+                        className="border rounded-md p-2 w-full"
                     />
                     <button
                         onClick={handleDownloadExcel}
@@ -219,64 +207,40 @@ const Dashboard = () => {
                     <table className="min-w-full bg-white shadow-md rounded-md overflow-hidden">
                         <thead className="bg-gray-200 sticky top-0 z-10">
                             <tr>
-                                <th
-                                    className="py-3 px-2 cursor-pointer"
-                                >
-                                    Verified
-                                </th>
-                                <th
-                                    className="py-3 px-2 cursor-pointer"
-                                    onClick={() => handleSort('serialNumber')}
-                                >
-                                    SN {'↑↓'}
-                                </th>
-                                <th
-                                    className="py-3 px-2 cursor-pointer"
-                                    onClick={() => handleSort('name')}
-                                >
-                                    Name {'↑↓'}
-                                </th>
+                                <th className="py-3 px-2 cursor-pointer">Verified</th>
+                                <th className="py-3 px-2 cursor-pointer" onClick={() => handleSort('serialNumber')}>SN {'↑↓'}</th>
+                                <th className="py-3 px-2 cursor-pointer" onClick={() => handleSort('name')}>Name {'↑↓'}</th>
                                 <th className="py-3 px-2">Email</th>
                                 <th className="py-3 px-2">Phone</th>
                                 <th className="py-3 px-2">Date of Joining</th>
+                                <th className="py-3 px-2">Valid From</th>
                                 <th className="py-3 px-2">Valid Upto</th>
                                 <th className="py-3 px-2">Invoice</th>
                                 <th className="py-3 px-2">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y">
-                            {filteredMembers.map((member, index) => (
-                                <tr key={index} className={isExpiringSoon(calculateValidUpto(member.DOJ, member.duration)) ? 'bg-yellow-200' : ''}>
-                                    <td className="py-3 px-2 text-center"><input
-                                        type="checkbox"
-                                        checked={member.verified}
-                                    /></td>
-                                    <td className="py-3 px-2 text-center">{member.serialNumber}</td>
-                                    <td className="py-3 px-2">{member.name}</td>
-                                    <td className="py-3 px-2">{member.email}</td>
-                                    <td className="py-3 px-2 text-center">{member.phone}</td>
-                                    <td className="py-3 px-2 text-center">{formatDate(member.DOJ)}</td>
-                                    <td className="py-3 px-2 text-center">{calculateValidUpto(member.DOJ, member.duration)}</td>
-                                    <td className="py-3 px-2 text-center">
-                                        <button
-                                            className="text-blue-500 hover:text-blue-700"
-                                            onClick={() => handlePreview(member)}
-                                        >
+                        <tbody className="divide-y divide-gray-100">
+                            {filteredMembers?.map((member, index) => (
+                                <tr key={index} className={isExpiringSoon(calculateValidUpto(member?.planStarted ? member.planStarted : member.DOJ, member.duration)) ? 'bg-yellow-100' : ''}>
+                                    <td className="py-4 px-2 text-center">{member.verified ? '✅' : '❌'}</td>
+                                    <td className="py-4 px-2 text-center">{member.serialNumber || index + 1}</td>
+                                    <td className="py-4 px-2 text-center">{member.name}</td>
+                                    <td className="py-4 px-2 text-center">{member.email}</td>
+                                    <td className="py-4 px-2 text-center">{member.phone}</td>
+                                    <td className="py-4 px-2 text-center">{formatDate(member.DOJ)}</td>
+                                    <td className="py-4 px-2 text-center">{member.planStarted ? formatDate(member.planStarted) : '-'}</td>
+                                    <td className="py-4 px-2 text-center">{calculateValidUpto(member.DOJ, member.duration)}</td>
+                                    <td className="py-4 px-2 text-center">
+                                        <button onClick={() => handlePreview(member)} className="text-blue-500">
                                             View
                                         </button>
                                     </td>
-                                    <td className="py-3 px-2 flex gap-2">
-                                        <Link
-                                            href={`/members/${member._id}`}
-                                            className="text-2xl text-green-500 hover:text-green-700"
-                                        >
-                                            <HiPencilSquare />
-                                        </Link>
-                                        <button
-                                            className="text-2xl text-red-500 hover:text-red-700"
-                                            onClick={() => handleDeleteClick(member)}
-                                        >
-                                            <MdOutlineDeleteForever />
+                                    <td className="flex gap-3 py-4 px-2 text-center">
+                                        <button onClick={() => router.push(`/member/${member._id}`)} className="text-yellow-500">
+                                            <HiPencilSquare size={20} />
+                                        </button>
+                                        <button className="text-red-500" onClick={() => handleDeleteClick(member)}>
+                                            <MdOutlineDeleteForever size={20} />
                                         </button>
                                     </td>
                                 </tr>
@@ -285,52 +249,47 @@ const Dashboard = () => {
                     </table>
                 </div>
 
+                {/* Invoice Modal */}
                 {showModal && (
                     <InvoiceModal
                         member={selectedMember}
                         setShowModal={setShowModal}
                     />
                 )}
-                {
-                    showDeleteDialog && memberToDelete && (
-                        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-                            <div className="bg-white p-6 rounded-lg shadow-lg">
-                                <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
-                                <p>Are you sure you want to delete {memberToDelete.name}?</p>
-                                <div className="mt-4">
-                                    <label htmlFor="pin" className="block mb-2">Enter PIN:</label>
-                                    <input
-                                        type="password"
-                                        id="pin"
-                                        value={pin}
-                                        onChange={(e) => setPin(e.target.value)}
-                                        className="border p-2 rounded-md w-full"
-                                    />
-                                </div>
-                                <div className="mt-4 flex justify-end space-x-2">
-                                    <button
-                                        className="bg-gray-300 text-black px-2 py-2 rounded-md hover:bg-gray-400 transition-colors"
-                                        onClick={() => {
-                                            setShowDeleteDialog(false);
-                                            setPin(''); // Clear PIN on cancel
-                                        }}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        className="bg-red-500 text-white px-2 py-2 rounded-md hover:bg-red-600 transition-colors"
-                                        onClick={confirmDeleteMember}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+
+                {/* Delete Confirmation Dialog */}
+                {showDeleteDialog && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-white p-6 rounded shadow-lg">
+                            <h2 className="text-xl font-bold">Confirm Deletion</h2>
+                            <p>Are you sure you want to delete this member?</p>
+                            <div className="flex gap-2 mt-4">
+                                <input
+                                    type="password"
+                                    value={pin}
+                                    onChange={(e) => setPin(e.target.value)}
+                                    placeholder="Enter PIN"
+                                    className="border rounded-md p-2 flex-1"
+                                />
+                                <button
+                                    onClick={confirmDeleteMember}
+                                    className="bg-red-500 text-white p-2 rounded-md"
+                                >
+                                    Confirm
+                                </button>
                             </div>
+                            <button
+                                onClick={() => setShowDeleteDialog(false)}
+                                className="mt-4 text-blue-500"
+                            >
+                                Cancel
+                            </button>
                         </div>
-                    )
-                }
+                    </div>
+                )}
             </div>
         </div>
     );
 };
 
-export default Dashboard;
+export default MemberList;

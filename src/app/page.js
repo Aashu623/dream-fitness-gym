@@ -1,6 +1,6 @@
 // src/app/page.tsx
 'use client'
-import Hero from '../components/Hero';
+import Hero from '@/ui/components/Hero';
 import '@radix-ui/themes/styles.css';
 export default function HomePage() {
   return (

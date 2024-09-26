@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import logo from "@/assets/logo.png";

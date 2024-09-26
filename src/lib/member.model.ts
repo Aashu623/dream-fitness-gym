@@ -15,4 +15,5 @@ export interface Member {
   verified: boolean;
   amount:number,
   DOJ:Date;
+  planStarted: Date;
 }
