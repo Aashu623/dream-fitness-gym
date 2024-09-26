@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { useAddMemberMutation, useGetAllMembersQuery } from "@/redux/slice/membersApiSlice";
 import { z } from "zod";
-import Loader from '@/components/Loader'
+import Loader from '@/ui/Loader'
 
 // Define Zod schema matching memberSchema from mongoose
 const memberSchema = z.object({
