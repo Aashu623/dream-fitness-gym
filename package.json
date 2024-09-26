@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@vercel/postgres": "^0.10.0",
     "chart.js": "^4.4.4",
+    "dayjs": "^1.11.13",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "mongodb": "^6.8.0",

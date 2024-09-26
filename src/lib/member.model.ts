@@ -13,7 +13,7 @@ export interface Member {
   utr?: string; // Optional
   receiverName?: string; // Optional
   verified: boolean;
-  amount:number,
+  amount:string,
   DOJ:Date;
   planStarted: Date;
 }

@@ -6,7 +6,6 @@ import { useAddMemberMutation, useGetAllMembersQuery } from "@/redux/slice/membe
 import { z } from "zod";
 import Loader from '@/ui/Loader'
 
-// Define Zod schema matching memberSchema from mongoose
 const memberSchema = z.object({
     serialNumber: z.number(),
     name: z.string().min(1, "Name is required"),
@@ -20,7 +19,7 @@ const memberSchema = z.object({
     paymentMode: z.enum(["upi", "cash"]),
     utr: z.string().optional(),
     receiverName: z.string().optional(),
-    amount: z.number().positive("Amount must be a positive number").min(1, "Amount is required"),
+    amount: z.string().min(1, "Amount is required"),
     DOJ: z.date(),
 });
 
@@ -42,9 +41,8 @@ function RegisterForm() {
     const [receiverName, setReceiverName] = useState("");
     const [amount, setAmount] = useState("");
     const [serialNumber, setSerialNumber] = useState(0);
-    const [DOJ, setDOJ] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
+    const [DOJ, setDOJ] = useState(new Date().toISOString().split('T')[0]);
 
-    // Compute the serial number based on the last member's serial number
     useEffect(() => {
         if (members && members.length > 0) {
             const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
@@ -68,7 +66,7 @@ function RegisterForm() {
             paymentMode,
             utr: paymentMode === "upi" ? utr : undefined,
             receiverName: paymentMode === "cash" ? receiverName : undefined,
-            amount: parseFloat(amount),
+            amount: amount,
             DOJ: new Date(DOJ),
             planStarted: new Date(DOJ),
         };
@@ -227,8 +225,7 @@ function RegisterForm() {
 
                 <div>
                     <input
-                        type="number"
-                        step="0.01"
+                        type="string"
                         className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
                         placeholder="Enter total amount"
                         value={amount}

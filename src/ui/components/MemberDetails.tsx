@@ -28,8 +28,7 @@ const memberSchema = z.object({
   utr: z.string().optional(),
   receiverName: z.string().optional(),
   amount: z
-    .number()
-    .positive("Amount must be a positive number")
+    .string()
     .min(1, "Amount is required"),
   verified: z.boolean(),
   planStarted: z.string().refine((date) => !isNaN(Date.parse(date)), {
@@ -60,7 +59,7 @@ const InputField = ({
 
 function MemberDetailsPage() {
   const router = useRouter();
-  const { id }:{id:string} = useParams();
+  const { id }: { id: string } = useParams();
   const {
     data: member,
     isLoading: fetching,
@@ -84,7 +83,7 @@ function MemberDetailsPage() {
     paymentMode: "",
     utr: "",
     receiverName: "",
-    amount: 0,
+    amount: '',
     verified: false,
     planStarted: new Date().toISOString().split("T")[0],
   });
@@ -125,13 +124,12 @@ function MemberDetailsPage() {
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = (e: any) => {
     e.preventDefault();
     setShowUpdateModal(true);
   };
 
   const handleConfirmUpdate = async () => {
-    // TODO: Move PIN verification to the server side for better security
     if (pin !== "191800") {
       toast.error("Wrong PIN! Contact the owner to update the member.");
       return;
@@ -146,8 +144,8 @@ function MemberDetailsPage() {
     }
     try {
       await updateMember({
-        id:id,
-        updatedData: { ...formData,planStarted: new Date(formData.planStarted) },
+        id: id,
+        updatedData: { ...formData, planStarted: new Date(formData.planStarted) },
       }).unwrap();
 
       setIsEditing(false);

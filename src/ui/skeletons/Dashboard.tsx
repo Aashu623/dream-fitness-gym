@@ -6,7 +6,7 @@ export default function Dashboard() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setLoading(false);
-        }, 2000); 
+        }, 2000);
         return () => clearTimeout(timer);
     }, []);
 
@@ -28,6 +28,32 @@ export default function Dashboard() {
                         <a href="#">Dummy Link 2</a>
                     </li>
                 </ul>
+                <div className='flex flex-col gap-4 py-6 animate-pulse'>
+                    <div className="p-4 bg-orange-400 text-black rounded-lg shadow-lg text-center">
+                        <h2 className="text-lg font-semibold">Total Amount Collected</h2>
+                        <span className="text-3xl font-bold"></span>
+                    </div>
+                    <div className="bg-orange-400 text-black p-6 rounded-lg shadow-lg">
+                        <h2 className="text-lg font-semibold mb-4">Filter by Joining Date</h2>
+                        <div className="flex flex-col gap-4">
+                            <input
+                                type="date"
+                                name="startDate"
+                                className="p-2 border rounded"
+                                placeholder="Start Date"
+                            />
+                            <input
+                                type="date"
+                                name="endDate"
+                                className="p-2 border rounded"
+                                placeholder="End Date"
+                            />
+                            <div className="text-lg">
+                                <strong>Total Collection (in selected range): </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </aside>
 
             <main className="w-full p-6">

@@ -28,36 +28,30 @@ const MemberList = () => {
     useEffect(() => {
         let filtered = members;
 
-        // Filter by search query
         if (searchQuery) {
             filtered = filtered.filter(member =>
                 member.name.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
 
-        // Filter by verified/unverified status
         if (filterVerified) {
             filtered = filtered.filter(member =>
                 filterVerified === 'verified' ? member.verified : !member.verified
             );
         }
 
-        // Filter by gender
         if (filterGender) {
             filtered = filtered.filter(member => member.gender === filterGender);
         }
 
-        // Filter by duration
         if (filterDuration) {
             filtered = filtered.filter(member => member.duration === parseInt(filterDuration));
         }
 
-        // Filter by DOJ (Date of Joining)
         if (filterDOJ) {
             filtered = filtered.filter(member => formatDate(member.DOJ) === formatDate(filterDOJ));
         }
 
-        // Filter by Valid Upto
         if (filterValidUpto) {
             filtered = filtered.filter(member => calculateValidUpto(member.DOJ, member.duration) === formatDate(filterValidUpto));
         }
@@ -221,15 +215,15 @@ const MemberList = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {filteredMembers?.map((member, index) => (
-                                <tr key={index} className={isExpiringSoon(calculateValidUpto(member?.planStarted ? member.planStarted : member.DOJ, member.duration)) ? 'bg-yellow-100' : ''}>
-                                    <td className="py-4 px-2 text-center">{member.verified ? '✅' : '❌'}</td>
+                                <tr key={index} className={isExpiringSoon(calculateValidUpto( member.planStarted, member.duration)) ? 'bg-yellow-100' : ''}>
+                                    <td className="py-4 px-2 text-center">{member.verified ? '✅' : '⚠️'}</td>
                                     <td className="py-4 px-2 text-center">{member.serialNumber || index + 1}</td>
                                     <td className="py-4 px-2 text-center">{member.name}</td>
                                     <td className="py-4 px-2 text-center">{member.email}</td>
                                     <td className="py-4 px-2 text-center">{member.phone}</td>
                                     <td className="py-4 px-2 text-center">{formatDate(member.DOJ)}</td>
                                     <td className="py-4 px-2 text-center">{member.planStarted ? formatDate(member.planStarted) : '-'}</td>
-                                    <td className="py-4 px-2 text-center">{calculateValidUpto(member.DOJ, member.duration)}</td>
+                                    <td className="py-4 px-2 text-center">{calculateValidUpto(member.planStarted, member.duration)}</td>
                                     <td className="py-4 px-2 text-center">
                                         <button onClick={() => handlePreview(member)} className="text-blue-500">
                                             View
