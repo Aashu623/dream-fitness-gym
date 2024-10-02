@@ -1,5 +1,6 @@
 // member.model.ts
 export interface Member {
+  previousPlan: any;
   serialNumber: number;
   name: string;
   age: number;

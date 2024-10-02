@@ -33,7 +33,7 @@ const Header = () => {
                 </Link>
             </nav >
 
-            < Link href="/dashboard" className="bg-orange-600 text-black px-4 py-2 rounded-lg hover:bg-orange-600" >
+            < Link href="/dashboard/members" className="bg-orange-600 text-black px-4 py-2 rounded-lg hover:bg-orange-600" >
                 Dashboard
             </Link >
         </header >

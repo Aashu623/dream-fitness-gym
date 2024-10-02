@@ -34,7 +34,14 @@ const membersApiSlice = createApi({
       }),
       invalidatesTags: (result, error) => [{ type: "Member" }, "MemberList"],
     }),
-
+    updateMemberPlan: builder.mutation({
+      query: ({ memberId, newAmount, newPlanStartDate, newReceiverName, newUtr, newPaymentMode,newDuration }) => ({
+        url: `${memberId}/update`,
+        method: 'PUT',
+        body: { newAmount, newPlanStartDate, newReceiverName, newUtr, newPaymentMode,newDuration },
+      }),
+      invalidatesTags: (result, error) => [{ type: "Member" }, "MemberList"],
+    }),
     deleteMember: builder.mutation<void, string>({
       query: (id) => ({
         url: `/${id}`,
@@ -53,6 +60,7 @@ export const {
   useGetMemberByIdQuery,
   useAddMemberMutation,
   useUpdateMemberMutation,
+  useUpdateMemberPlanMutation,
   useDeleteMemberMutation,
 } = membersApiSlice;
 

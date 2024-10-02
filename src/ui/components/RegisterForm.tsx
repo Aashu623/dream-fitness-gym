@@ -71,7 +71,6 @@ function RegisterForm() {
             planStarted: new Date(DOJ),
         };
 
-        // Validate formData using Zod schema
         const validation = memberSchema.safeParse(formData);
         if (!validation.success) {
             validation.error.issues.forEach((issue) => {
@@ -84,7 +83,7 @@ function RegisterForm() {
             await addMember(formData).unwrap();
             toast.success("Member added successfully!");
             setLoading(false)
-            router.push("/dashboard");
+            router.push("/dashboard/members");
         } catch (error) {
             setLoading(false)
             toast.error("Failed to add member!");
@@ -182,9 +181,6 @@ function RegisterForm() {
                         onChange={(e) => setAddress(e.target.value)}
                     />
                 </div>
-
-
-
                 <div>
                     <select
                         className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white outline-none"
@@ -207,7 +203,6 @@ function RegisterForm() {
                         <option value={12} className="bg-transparent font-semibold text-orange-500">12 months (yearly)</option>
                     </select>
                 </div>
-
                 <div>
                     <select
                         className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white outline-none appearance-none"
@@ -221,8 +216,6 @@ function RegisterForm() {
                     </select>
                 </div>
 
-
-
                 <div>
                     <input
                         type="string"
@@ -233,35 +226,31 @@ function RegisterForm() {
                         required
                     />
                 </div>
-                {
-                    paymentMode === "upi" && (
-                        <div>
-                            <input
-                                type="text"
-                                className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                                placeholder="Enter UTR"
-                                value={utr}
-                                onChange={(e) => setUtr(e.target.value)}
-                                required
-                            />
-                        </div>
-                    )
-                }
+                {paymentMode === "upi" && (
+                    <div>
+                        <input
+                            type="text"
+                            className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                            placeholder="Enter UTR"
+                            value={utr}
+                            onChange={(e) => setUtr(e.target.value)}
+                            required
+                        />
+                    </div>
+                )}
 
-                {
-                    paymentMode === "cash" && (
-                        <div>
-                            <input
-                                type="text"
-                                className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                                placeholder="Enter receiver name"
-                                value={receiverName}
-                                onChange={(e) => setReceiverName(e.target.value)}
-                                required
-                            />
-                        </div>
-                    )
-                }
+                {paymentMode === "cash" && (
+                    <div>
+                        <input
+                            type="text"
+                            className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                            placeholder="Enter receiver name"
+                            value={receiverName}
+                            onChange={(e) => setReceiverName(e.target.value)}
+                            required
+                        />
+                    </div>
+                )}
 
                 <div className="col-span-1">
                     <label htmlFor="doj" className="block text-white">Joining Date:</label>

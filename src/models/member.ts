@@ -18,6 +18,10 @@ const memberSchema = new Schema({
   amount: { type: String, required: true },
   DOJ: { type: Date, required: true },
   planStarted: { type: Date },
+  previousPlan: [
+    { amount: String, utr: String, receiverName: String, paymentMode: String,duration: Number},
+  ],
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const Member = models.Member || model("Member", memberSchema);

@@ -41,11 +41,19 @@ const Stats = () => {
       let totalAmount = 0;
 
       members.forEach(member => {
+        const memberAmount = parseInt(member.amount) || 0;
+
+        totalAmount += memberAmount;
+
+        if (member.previousPlan) {
+          member.previousPlan.forEach(plan => {
+            totalAmount += parseInt(plan.amount) || 0;
+          });
+        }
+
         if (member.duration >= 1 && member.duration <= 12) {
           durationCounts[member.duration - 1] += 1;
         }
-
-        totalAmount += parseInt(member.amount);
       });
 
       setStatistics({
@@ -72,7 +80,7 @@ const Stats = () => {
     }
   }, [members, dateRange]);
 
-  const handleDateChange = (e) => {
+  const handleDateChange = (e:any) => {
     const { name, value } = e.target;
     setDateRange(prev => ({ ...prev, [name]: value }));
   };

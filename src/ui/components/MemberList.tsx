@@ -4,13 +4,14 @@ import { useGetAllMembersQuery, useDeleteMemberMutation } from '@/redux/slice/me
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { HiPencilSquare } from "react-icons/hi2";
+import { GrUpgrade } from "react-icons/gr";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import InvoiceModal from '@/ui/components/InvoiceModal';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const MemberList = () => {
-    const router = useRouter(); 
+    const router = useRouter();
     const [selectedMember, setSelectedMember] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -100,6 +101,10 @@ const MemberList = () => {
         }
     };
 
+    const handleUpgradeClick = (member: any) => {
+        setMemberToDelete(member);
+        setShowDeleteDialog(true);
+    };
     const handleDeleteClick = (member: any) => {
         setMemberToDelete(member);
         setShowDeleteDialog(true);
@@ -215,7 +220,7 @@ const MemberList = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {filteredMembers?.map((member, index) => (
-                                <tr key={index} className={isExpiringSoon(calculateValidUpto( member.planStarted, member.duration)) ? 'bg-yellow-100' : ''}>
+                                <tr key={index} className={isExpiringSoon(calculateValidUpto(member.planStarted, member.duration)) ? 'bg-yellow-100' : ''}>
                                     <td className="py-4 px-2 text-center">{member.verified ? '✅' : '⚠️'}</td>
                                     <td className="py-4 px-2 text-center">{member.serialNumber || index + 1}</td>
                                     <td className="py-4 px-2 text-center">{member.name}</td>
@@ -233,7 +238,10 @@ const MemberList = () => {
                                         <button onClick={() => router.push(`/member/${member._id}`)} className="text-yellow-500">
                                             <HiPencilSquare size={20} />
                                         </button>
-                                        <button className="text-red-500" onClick={() => handleDeleteClick(member)}>
+                                        <button onClick={() => router.push(`/member/${member._id}/update`)} className='text-green-500'>
+                                            <GrUpgrade size={20} />
+                                        </button>
+                                        <button onClick={() => handleDeleteClick(member)} className="text-red-500">
                                             <MdOutlineDeleteForever size={20} />
                                         </button>
                                     </td>
