@@ -148,7 +148,7 @@ const MemberList = () => {
     };
 
     return (
-        <div className="py-8 bg-orange-100 min-h-screen flex justify-center">
+        <div className="py-8 px-4 bg-orange-100 min-h-screen flex justify-center">
             <div className="flex mx-auto p-6 bg-white shadow-lg rounded-lg overflow-hidden gap-2">
 
                 <div className="flex flex-col gap-4 mb-4">

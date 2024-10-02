@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUpdateMemberPlanMutation, useGetMemberByIdQuery } from "@/redux/slice/membersApiSlice";
 import { useParams } from "next/navigation";
+import Loader from "@/ui/Loader";
 
 export default function UpdatePlanPage() {
     const { id } = useParams();
@@ -40,7 +41,7 @@ export default function UpdatePlanPage() {
         }
     };
 
-    if (memberLoading) return <div className="text-center text-lg">Loading member data...</div>;
+    if (memberLoading) return <Loader />
     if (memberError) return <div className="text-center text-lg text-red-500">Error loading member data.</div>;
 
     return (
