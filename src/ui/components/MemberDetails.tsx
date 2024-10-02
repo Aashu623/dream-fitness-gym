@@ -151,7 +151,7 @@ function MemberDetailsPage() {
       setIsEditing(false);
       setShowUpdateModal(false);
       setPin("");
-      router.push("/dashboard");
+      router.push("/dashboard/members");
       toast.success("Member updated successfully!");
     } catch (error) {
       const errorMessage = error?.data?.message || "Failed to update member!";
