@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ColorRing } from 'react-loader-spinner'
 import Image from "next/image";
 import formBg from '@/assets/formBg.png';
+import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
 
 
 const memberSchema = z.object({
@@ -31,7 +32,7 @@ function RegisterForm() {
     const { data: members } = useGetAllMembersQuery();
     const [addMember, { isLoading: adding }] = useAddMemberMutation();
     const initialFormData = {
-        serialNumber: 0,
+        serialNumber: '',
         name: '',
         email: '',
         gender: '',
@@ -39,7 +40,7 @@ function RegisterForm() {
         phone: '',
         address: '',
         emergencyContact: '',
-        duration: 1,
+        duration: '',
         paymentMode: 'upi',
         utr: '',
         receiverName: '',
@@ -51,7 +52,7 @@ function RegisterForm() {
     useEffect(() => {
         if (members && members.length > 0) {
             const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
-            setFormData((prev) => ({ ...prev, serialNumber: lastMemberSerial + 1 }));
+            setFormData((prev) => ({ ...prev, serialNumber: String(lastMemberSerial + 1) }));
         }
     }, [members]);
 
@@ -65,6 +66,8 @@ function RegisterForm() {
 
         const validation = memberSchema.safeParse({
             ...formData,
+            serialNumber: parseInt(formData.serialNumber),
+            duration: parseInt(formData.duration),
             age: parseInt(formData.age),
             DOJ: new Date(formData.DOJ),
             utr: formData.paymentMode === "upi" ? formData.utr : undefined,
@@ -195,7 +198,14 @@ function RegisterForm() {
                                 { value: 1, label: '1 month' },
                                 { value: 2, label: '2 months' },
                                 { value: 3, label: '3 months' },
-                                // add other options here
+                                { value: 4, label: '4 months' },
+                                { value: 5, label: '5 months' },
+                                { value: 6, label: '6 months' },
+                                { value: 7, label: '7 months' },
+                                { value: 8, label: '8 months' },
+                                { value: 9, label: '9 months' },
+                                { value: 10, label: '10 months' },
+                                { value: 11, label: '11 months' },
                                 { value: 12, label: '12 months (yearly)' },
                             ]}
                             required
@@ -277,7 +287,7 @@ function RegisterForm() {
                             disabled={adding}
                             className="w-full max-w-[100px] p-2 bg-orange-600 text-white hover:bg-white hover:text-orange-600 border-2 border-orange-600 rounded-lg transition-colors duration-300"
                         >
-                            {adding ? <ColorRing height="20" width="20"/> : "Register"}
+                            {adding ? <ColorRing height="20" width="20" /> : "Register"}
                         </button>
                     </div>
                 </div>
