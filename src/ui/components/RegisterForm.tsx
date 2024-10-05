@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { useAddMemberMutation, useGetAllMembersQuery } from "@/redux/slice/membersApiSlice";
 import { z } from "zod";
-import { Audio } from 'react-loader-spinner'
+import { ColorRing } from 'react-loader-spinner'
 import Image from "next/image";
 import formBg from '@/assets/formBg.png';
 
@@ -94,7 +94,7 @@ function RegisterForm() {
                     <Image src={formBg} alt="formBg" className="h-full w-full rounded-l-md" />
                 </div>
                 <div className="flex flex-col gap-4 rounded-r-md bg-gray-800 w-full px-8 pt-10 shadow-lg">
-                    <form onSubmit={handleSubmit} className="min-w-[600px] grid grid-cols-1 sm:grid-cols-2 gap-3 bg-transparent">
+                    <form onSubmit={(e) => e.preventDefault()} className="min-w-[600px] grid grid-cols-1 sm:grid-cols-2 gap-3 bg-transparent">
                         <InputField
                             label="Name"
                             name="name"
@@ -189,6 +189,7 @@ function RegisterForm() {
                         <SelectField
                             label="Plan Duration"
                             name="duration"
+                            type="number"
                             value={formData.duration}
                             onChange={handleInputChange}
                             options={[
@@ -272,11 +273,12 @@ function RegisterForm() {
                             Clear
                         </button>
                         <button
-                            type="submit"
+                            type="button"
+                            onClick={(e) => handleSubmit(e)}
                             disabled={adding}
                             className="w-full max-w-[100px] p-2 bg-orange-600 text-white hover:bg-white hover:text-orange-600 border-2 border-orange-600 rounded-lg transition-colors duration-300"
                         >
-                            {adding ? <Audio height="20" width="20" color="#fff" /> : "Register"}
+                            {adding ? <ColorRing height="20" width="20"/> : "Register"}
                         </button>
                     </div>
                 </div>
