@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { useAddMemberMutation, useGetAllMembersQuery } from "@/redux/slice/membersApiSlice";
 import { z } from "zod";
-import Loader from '@/ui/Loader'
+import { Audio } from 'react-loader-spinner'
+import Image from "next/image";
+import formBg from '@/assets/formBg.png';
+
 
 const memberSchema = z.object({
     serialNumber: z.number(),
@@ -27,256 +30,288 @@ function RegisterForm() {
     const router = useRouter();
     const { data: members } = useGetAllMembersQuery();
     const [addMember, { isLoading: adding }] = useAddMemberMutation();
-    const [loading, setLoading] = useState(false);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [gender, setGender] = useState("");
-    const [age, setAge] = useState("");
-    const [phone, setPhone] = useState("");
-    const [address, setAddress] = useState("");
-    const [emergencyContact, setEmergencyContact] = useState("");
-    const [duration, setDuration] = useState(0);
-    const [paymentMode, setPaymentMode] = useState("");
-    const [utr, setUtr] = useState("");
-    const [receiverName, setReceiverName] = useState("");
-    const [amount, setAmount] = useState("");
-    const [serialNumber, setSerialNumber] = useState(0);
-    const [DOJ, setDOJ] = useState(new Date().toISOString().split('T')[0]);
+    const initialFormData = {
+        serialNumber: 0,
+        name: '',
+        email: '',
+        gender: '',
+        age: '',
+        phone: '',
+        address: '',
+        emergencyContact: '',
+        duration: 1,
+        paymentMode: 'upi',
+        utr: '',
+        receiverName: '',
+        amount: '',
+        DOJ: new Date().toISOString().split('T')[0],
+    }
+    const [formData, setFormData] = useState(initialFormData);
 
     useEffect(() => {
         if (members && members.length > 0) {
             const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
-            setSerialNumber(lastMemberSerial + 1);
+            setFormData((prev) => ({ ...prev, serialNumber: lastMemberSerial + 1 }));
         }
     }, [members]);
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        setLoading(true)
-        const formData = {
-            serialNumber,
-            name,
-            email,
-            gender,
-            age: parseInt(age),
-            phone,
-            address,
-            emergencyContact,
-            duration,
-            paymentMode,
-            utr: paymentMode === "upi" ? utr : undefined,
-            receiverName: paymentMode === "cash" ? receiverName : undefined,
-            amount: amount,
-            DOJ: new Date(DOJ),
-            planStarted: new Date(DOJ),
-        };
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
 
-        const validation = memberSchema.safeParse(formData);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const validation = memberSchema.safeParse({
+            ...formData,
+            age: parseInt(formData.age),
+            DOJ: new Date(formData.DOJ),
+            utr: formData.paymentMode === "upi" ? formData.utr : undefined,
+            receiverName: formData.paymentMode === "cash" ? formData.receiverName : undefined,
+        });
+
         if (!validation.success) {
-            validation.error.issues.forEach((issue) => {
-                toast.error(issue.message);
-            });
+            validation.error.issues.forEach((issue) => toast.error(issue.message));
             return;
         }
 
         try {
-            await addMember(formData).unwrap();
+            await addMember(validation.data).unwrap();
             toast.success("Member added successfully!");
-            setLoading(false)
             router.push("/dashboard/members");
-        } catch (error) {
-            setLoading(false)
+        } catch {
             toast.error("Failed to add member!");
         }
     };
+
     return (
-        <>{loading ? (<Loader />) : <div className="w-full">
+        <>
             <Toaster position="bottom-center" />
-
-            <form
-                onSubmit={handleSubmit}
-                className="sm:grid sm:grid-cols-2 border-2 rounded-xl gap-6 max-w-screen-md w-full mx-auto my-8 p-6 backdrop-blur-sm shadow-md drop-shadow-lg"
-            >
-                <div className="col-span-1">
-                    <input
-                        type="text"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
+            <h1 className="absolute text-9xl white top-2 font-extrabold text-gray-500">REGISTER</h1>
+            <div className="w-full flex justify-center max-w-screen-lg rounded-xl z-10 mt-10 ">
+                <div className="w-full overflow-hidden min-h-full flex items-center justify-between flex-col">
+                    <Image src={formBg} alt="formBg" className="h-full w-full rounded-l-md" />
                 </div>
-                <div className="col-span-1">
-                    <input
-                        type="number"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your serial number"
-                        value={serialNumber}
-                        onChange={(e) => setSerialNumber(parseInt(e.target.value))}
-                        required
-                    />
-                </div>
+                <div className="flex flex-col gap-4 rounded-r-md bg-gray-800 w-full px-8 pt-10 shadow-lg">
+                    <form onSubmit={handleSubmit} className="min-w-[600px] grid grid-cols-1 sm:grid-cols-2 gap-3 bg-transparent">
+                        <InputField
+                            label="Name"
+                            name="name"
+                            type="text"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            placeholder="Enter your name"
+                            required
+                        />
 
-                <div className="col-span-2">
-                    <input
-                        type="email"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
+                        {/** Serial Number **/}
+                        <InputField
+                            label="Serial Number"
+                            name="serialNumber"
+                            type="number"
+                            value={formData.serialNumber}
+                            onChange={handleInputChange}
+                            readOnly
+                        />
 
-                <div>
-                    <select
-                        className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white appearance-none"
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                        required
-                    >
-                        <option value="" disabled className="bg-transparent text-orange-500">Select your gender</option>
-                        <option value="male" className="bg-transparent text-orange-500">Male</option>
-                        <option value="female" className="bg-transparent text-orange-500">Female</option>
-                        <option value="other" className="bg-transparent text-orange-500">Other</option>
-                    </select>
-                </div>
+                        {/** Email **/}
+                        <InputField
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            placeholder="Enter your email"
+                        />
 
-                <div>
-                    <input
-                        type="number"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your age"
-                        value={age}
-                        onChange={(e) => setAge(e.target.value)}
-                        required
-                    />
-                </div>
+                        {/** Gender **/}
+                        <SelectField
+                            label="Gender"
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleInputChange}
+                            options={[
+                                { value: '', label: 'Select your gender', disabled: true },
+                                { value: 'male', label: 'Male' },
+                                { value: 'female', label: 'Female' },
+                                { value: 'other', label: 'Other' },
+                            ]}
+                            required
+                        />
 
-                <div>
-                    <input
+                        {/** Age **/}
+                        <InputField
+                            label="Age"
+                            name="age"
+                            type="number"
+                            value={formData.age}
+                            onChange={handleInputChange}
+                            placeholder="Enter your age"
+                            required
+                        />
+
+                        {/** Phone Number **/}
+                        <InputField
+                            label="Phone Number"
+                            name="phone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => {
+                                handleInputChange(e);
+                                setFormData((prev) => ({ ...prev, emergencyContact: e.target.value }));
+                            }}
+                            placeholder="Enter your phone number"
+                            required
+                        />
+
+                        {/* * Emergency Contact *
+                    <InputField
+                        label="Emergency Contact"
+                        name="emergencyContact"
                         type="tel"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your phone number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <input
-                        type="tel"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
+                        value={formData.emergencyContact}
+                        onChange={handleInputChange}
                         placeholder="Enter emergency contact number"
-                        value={emergencyContact}
-                        onChange={(e) => setEmergencyContact(e.target.value)}
-                    />
-                </div>
-                <div className="col-span-2">
-                    <input
-                        type="text"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter your address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <select
-                        className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white outline-none"
-                        value={duration}
-                        onChange={(e) => setDuration(parseInt(e.target.value))}
-                        required
-                    >
-                        <option value="" className="bg-transparent font-semibold text-orange-500">Select duration</option>
-                        <option value={1} className="bg-transparent font-semibold text-orange-500">1 month</option>
-                        <option value={2} className="bg-transparent font-semibold text-orange-500">2 months</option>
-                        <option value={3} className="bg-transparent font-semibold text-orange-500">3 months</option>
-                        <option value={4} className="bg-transparent font-semibold text-orange-500">4 months</option>
-                        <option value={5} className="bg-transparent font-semibold text-orange-500">5 months</option>
-                        <option value={6} className="bg-transparent font-semibold text-orange-500">6 months</option>
-                        <option value={7} className="bg-transparent font-semibold text-orange-500">7 months</option>
-                        <option value={8} className="bg-transparent font-semibold text-orange-500">8 months</option>
-                        <option value={9} className="bg-transparent font-semibold text-orange-500">9 months</option>
-                        <option value={10} className="bg-transparent font-semibold text-orange-500">10 months</option>
-                        <option value={11} className="bg-transparent font-semibold text-orange-500">11 months</option>
-                        <option value={12} className="bg-transparent font-semibold text-orange-500">12 months (yearly)</option>
-                    </select>
-                </div>
-                <div>
-                    <select
-                        className="border-b border-gray-300 py-2 px-3 font-semibold w-full bg-transparent text-white outline-none appearance-none"
-                        value={paymentMode}
-                        onChange={(e) => setPaymentMode(e.target.value)}
-                        required
-                    >
-                        <option value="" disabled className="bg-transparent text-orange-500">Select payment mode</option>
-                        <option value="upi" className="bg-transparent text-orange-500">UPI</option>
-                        <option value="cash" className="bg-transparent text-orange-500">Cash</option>
-                    </select>
-                </div>
+                    /> */}
 
-                <div>
-                    <input
-                        type="string"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        placeholder="Enter total amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        required
-                    />
-                </div>
-                {paymentMode === "upi" && (
-                    <div>
-                        <input
+                        {/** Address **/}
+                        <InputField
+                            label="Address"
+                            name="address"
                             type="text"
-                            className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                            placeholder="Enter UTR"
-                            value={utr}
-                            onChange={(e) => setUtr(e.target.value)}
+                            value={formData.address}
+                            onChange={handleInputChange}
+                            placeholder="Enter your address"
+                        />
+
+                        {/** Plan Duration **/}
+                        <SelectField
+                            label="Plan Duration"
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleInputChange}
+                            options={[
+                                { value: 1, label: '1 month' },
+                                { value: 2, label: '2 months' },
+                                { value: 3, label: '3 months' },
+                                // add other options here
+                                { value: 12, label: '12 months (yearly)' },
+                            ]}
                             required
                         />
-                    </div>
-                )}
 
-                {paymentMode === "cash" && (
-                    <div>
-                        <input
-                            type="text"
-                            className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                            placeholder="Enter receiver name"
-                            value={receiverName}
-                            onChange={(e) => setReceiverName(e.target.value)}
+                        {/** Payment Mode **/}
+                        <SelectField
+                            label="Payment Mode"
+                            name="paymentMode"
+                            value={formData.paymentMode}
+                            onChange={handleInputChange}
+                            options={[
+                                { value: '', label: 'Select payment mode', disabled: true },
+                                { value: 'upi', label: 'UPI' },
+                                { value: 'cash', label: 'Cash' },
+                            ]}
                             required
                         />
+
+                        {/** Amount **/}
+                        <InputField
+                            label="Amount"
+                            name="amount"
+                            type="text"
+                            value={formData.amount}
+                            onChange={handleInputChange}
+                            placeholder="Enter total amount"
+                            required
+                        />
+
+                        {/** UTR (if UPI) **/}
+                        {formData.paymentMode === 'upi' && (
+                            <InputField
+                                label="UTR"
+                                name="utr"
+                                type="text"
+                                value={formData.utr}
+                                onChange={handleInputChange}
+                                placeholder="Enter UTR"
+                                required
+                            />
+                        )}
+
+                        {/** Receiver Name (if Cash) **/}
+                        {formData.paymentMode === 'cash' && (
+                            <InputField
+                                label="Receiver Name"
+                                name="receiverName"
+                                type="text"
+                                value={formData.receiverName}
+                                onChange={handleInputChange}
+                                placeholder="Enter receiver name"
+                                required
+                            />
+                        )}
+
+                        {/** Joining Date **/}
+                        <InputField
+                            label="Joining Date"
+                            name="DOJ"
+                            type="date"
+                            value={formData.DOJ}
+                            onChange={handleInputChange}
+                            required
+                        />
+
+                    </form>
+                    <div className="col-span-2 flex justify-end gap-2">
+                        <button
+                            onClick={(e) => setFormData(initialFormData)}
+                            type="button"
+                            className="w-full max-w-[100px] p-2 bg-white font-semibold text-orange-600 hover:bg-orange-50 hover:text-orange-600 border-2 border-orange-600 rounded-lg transition-colors duration-300"
+                        >
+                            Clear
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={adding}
+                            className="w-full max-w-[100px] p-2 bg-orange-600 text-white hover:bg-white hover:text-orange-600 border-2 border-orange-600 rounded-lg transition-colors duration-300"
+                        >
+                            {adding ? <Audio height="20" width="20" color="#fff" /> : "Register"}
+                        </button>
                     </div>
-                )}
-
-                <div className="col-span-1">
-                    <label htmlFor="doj" className="block text-white">Joining Date:</label>
-                    <input
-                        type="date"
-                        id="doj"
-                        className="border-b border-gray-300 py-2 px-3 text-white font-semibold w-full bg-transparent placeholder:text-white outline-none"
-                        value={DOJ}
-                        onChange={(e) => setDOJ(e.target.value)}
-                        required
-                    />
                 </div>
+            </div>
+        </>
+    );
+}
 
-                <div className="col-span-2">
-                    <button
-                        type="submit"
-                        disabled={adding}
-                        className="bg-orange-600 hover:bg-white hover:text-orange-600 duration-200 transition-all text-white w-full py-2 px-3"
-                    >
-                        Register
-                    </button>
-                </div>
-            </form>
+function InputField({ label, ...props }) {
+    return (
+        <div className="col-span-1">
+            <label className="block text-sm font-semibold text-white">{label}</label>
+            <input
+                className="w-full px-3 py-2 mt-1 border bg-transparent text-white text-sm placeholder:text-white placeholder:text-sm border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
+                {...props}
+            />
         </div>
-        }</>
+    );
+}
 
+function SelectField({ label, options, ...props }) {
+    return (
+        <div className="col-span-1">
+            <label className="block text-sm font-semibold text-white">{label}</label>
+            <select
+                className="w-full px-3 py-2 mt-1 border bg-transparent text-gray-300 text-sm border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
+                {...props}
+            >
+                {options.map((option) => (
+                    <option key={option.value} value={option.value} disabled={option.disabled}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
     );
 }
 
