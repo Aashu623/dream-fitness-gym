@@ -112,7 +112,6 @@ function RegisterForm() {
                             type="number"
                             value={formData.serialNumber}
                             onChange={handleInputChange}
-                            readOnly
                         />
 
                         {/** Email **/}
