@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
     <Provider store={store}>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased max-h-screen overflow-hidden`}
         >
           <button
             onClick={() => router.push('/dashboard/members')}

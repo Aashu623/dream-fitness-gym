@@ -9,6 +9,8 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import InvoiceModal from '@/ui/components/InvoiceModal';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { IoMdPersonAdd, IoMdOptions } from "react-icons/io";
+import { FaSearch } from "react-icons/fa";
 
 const MemberList = () => {
     const router = useRouter();
@@ -63,7 +65,7 @@ const MemberList = () => {
     const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
     const [pin, setPin] = useState('');
     const correctPin = '191800';
-
+    const [showFilterOptionsModal, setShowFilterOptionsModal] = useState(false)
     const handleSort = (field: string) => {
         const isAsc = sortBy.field === field && sortBy.order === 'asc';
         const order = isAsc ? 'desc' : 'asc';
@@ -101,10 +103,6 @@ const MemberList = () => {
         }
     };
 
-    const handleUpgradeClick = (member: any) => {
-        setMemberToDelete(member);
-        setShowDeleteDialog(true);
-    };
     const handleDeleteClick = (member: any) => {
         setMemberToDelete(member);
         setShowDeleteDialog(true);
@@ -148,109 +146,166 @@ const MemberList = () => {
     };
 
     return (
-        <div className="py-8 px-4 bg-orange-100 min-h-screen flex justify-center">
-            <div className="flex mx-auto p-6 bg-white shadow-lg rounded-lg overflow-hidden gap-2">
+        <div className="py-8 px-4 bg-gradient-to-r from-black via-gray-800 to-orange-900 min-h-screen flex justify-center">
+            <div className=" flex flex-col mx-auto p-6 bg-gray-800 shadow-lg rounded-lg overflow-hidden gap-2">
+                <div className='relative w-full flex justify-between items-center bg-gray-800 py-4'>
+                    <div className="border border-gray-900 rounded-md flex relative w-5/6 shadow-inner">
+                        <FaSearch className='absolute top-3 left-2 text-gray-900' />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search by name"
+                            className="bg-transparent px-4 py-2 mx-8 w-full focus:outline-none placeholder:text-gray-900"
+                        />
+                        <IoMdOptions
+                            className='absolute top-3 right-2 text-gray-900 cursor-pointer hover:text-orange-500 transition duration-200 ease-in-out'
+                            onClick={() => setShowFilterOptionsModal(!showFilterOptionsModal)}
+                        />
+                        {showFilterOptionsModal && (
+                            <div className='absolute z-20 bg-white border border-gray-300 rounded-md p-4 top-12 right-0 w-full shadow-md'>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <select
+                                        value={filterVerified}
+                                        onChange={(e) => setFilterVerified(e.target.value)}
+                                        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+                                    >
+                                        <option value="">All</option>
+                                        <option value="verified">Verified</option>
+                                        <option value="unverified">Unverified</option>
+                                    </select>
 
-                <div className="flex flex-col gap-4 mb-4">
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search by name"
-                        className="border rounded-md w-full p-2"
-                    />
+                                    <select
+                                        value={filterGender}
+                                        onChange={(e) => setFilterGender(e.target.value)}
+                                        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+                                    >
+                                        <option value="">All Genders</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
 
-                    <select
-                        value={filterVerified}
-                        onChange={(e) => setFilterVerified(e.target.value)}
-                        className="border rounded-md p-2 w-full"
-                    >
-                        <option value="">All</option>
-                        <option value="verified">Verified</option>
-                        <option value="unverified">Unverified</option>
-                    </select>
-
-                    <select
-                        value={filterGender}
-                        onChange={(e) => setFilterGender(e.target.value)}
-                        className="border rounded-md p-2 w-full"
-                    >
-                        <option value="">All Genders</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-
-                    <input
-                        type="number"
-                        value={filterDuration}
-                        onChange={(e) => setFilterDuration(e.target.value)}
-                        placeholder="Filter by duration"
-                        className="border rounded-md p-2 w-full"
-                    />
-                    <button
-                        onClick={handleDownloadExcel}
-                        className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
-                    >
-                        Download Excel
-                    </button>
+                                    <input
+                                        type="number"
+                                        value={filterDuration}
+                                        onChange={(e) => setFilterDuration(e.target.value)}
+                                        placeholder="Filter by duration"
+                                        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     <Link href="/member/register">
-                        <button
-                            className="bg-green-500 text-white w-full px-2 p-2 rounded-md hover:bg-green-600 transition-colors"
-                        >
-                            New Member
-                        </button>
+                        <IoMdPersonAdd className='text-2xl text-gray-500 hover:text-orange-500 cursor-pointer transition duration-200 ease-in-out' />
                     </Link>
                 </div>
-
-                <div className="overflow-x-auto max-h-[75vh]">
-                    <table className="min-w-full bg-white shadow-md rounded-md overflow-hidden">
-                        <thead className="bg-gray-200 sticky top-0 z-10">
+                <div className="overflow-auto max-h-[75vh]">
+                    <table className="min-w-full bg-gray-800">
+                        <thead className="bg-gray-900 sticky top-0 z-10">
                             <tr>
-                                <th className="py-3 px-2 cursor-pointer">Verified</th>
-                                <th className="py-3 px-2 cursor-pointer" onClick={() => handleSort('serialNumber')}>SN {'↑↓'}</th>
-                                <th className="py-3 px-2 cursor-pointer" onClick={() => handleSort('name')}>Name {'↑↓'}</th>
-                                <th className="py-3 px-2">Email</th>
-                                <th className="py-3 px-2">Phone</th>
-                                <th className="py-3 px-2">Date of Joining</th>
-                                <th className="py-3 px-2">Valid From</th>
-                                <th className="py-3 px-2">Valid Upto</th>
-                                <th className="py-3 px-2">Invoice</th>
-                                <th className="py-3 px-2">Actions</th>
+                                <th className="py-3 px-2 text-left cursor-pointer text-gray-500">
+                                    Verified
+                                </th>
+                                <th
+                                    className="py-3 px-2 text-left cursor-pointer text-gray-500"
+                                    onClick={() => handleSort('serialNumber')}
+                                >
+                                    SN {'↑↓'}
+                                </th>
+                                <th
+                                    className="py-3 px-2 text-left cursor-pointer text-gray-500"
+                                    onClick={() => handleSort('name')}
+                                >
+                                    Name{'↑↓'}
+                                </th>
+                                <th className="py-3 px-2 text-left text-gray-500">Email</th>
+                                <th className="py-3 px-2 text-left text-gray-500">Phone</th>
+                                <th className="py-3 px-2 text-left text-gray-500">Date of Joining</th>
+                                <th className="py-3 px-2 text-left text-gray-500">Valid From</th>
+                                <th className="py-3 px-2 text-left text-gray-500">Valid Upto</th>
+                                <th className="py-3 px-2 text-left text-gray-500">Invoice</th>
+                                <th className="py-3 px-2 text-left text-gray-500">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-900">
                             {filteredMembers?.map((member, index) => (
-                                <tr key={index} className={isExpiringSoon(calculateValidUpto(member.planStarted, member.duration)) ? 'bg-yellow-100' : ''}>
-                                    <td className="py-4 px-2 text-center">{member.verified ? '✅' : '⚠️'}</td>
-                                    <td className="py-4 px-2 text-center">{member.serialNumber || index + 1}</td>
+                                <tr
+                                    key={index}
+                                    className={`hover:bg-gray-900 text-gray-600 ${isExpiringSoon(
+                                        calculateValidUpto(member.planStarted, member.duration)
+                                    )
+                                        ? 'bg-yellow-100'
+                                        : ''
+                                        }`}
+                                >
+                                    <td className="py-4 px-2 text-center">
+                                        {member.verified ? '✅' : '⚠️'}
+                                    </td>
+                                    <td className="py-4 px-2 text-center">
+                                        {member.serialNumber || index + 1}
+                                    </td>
                                     <td className="py-4 px-2 text-center">{member.name}</td>
                                     <td className="py-4 px-2 text-center">{member.email}</td>
                                     <td className="py-4 px-2 text-center">{member.phone}</td>
-                                    <td className="py-4 px-2 text-center">{formatDate(member.DOJ)}</td>
-                                    <td className="py-4 px-2 text-center">{member.planStarted ? formatDate(member.planStarted) : '-'}</td>
-                                    <td className="py-4 px-2 text-center">{calculateValidUpto(member.planStarted, member.duration)}</td>
                                     <td className="py-4 px-2 text-center">
-                                        <button onClick={() => handlePreview(member)} className="text-blue-500">
+                                        {formatDate(member.DOJ)}
+                                    </td>
+                                    <td className="py-4 px-2 text-center">
+                                        {member.planStarted ? formatDate(member.planStarted) : '-'}
+                                    </td>
+                                    <td className="py-4 px-2 text-center">
+                                        {calculateValidUpto(member.planStarted, member.duration)}
+                                    </td>
+                                    <td className="py-4 px-2 text-center">
+                                        <button
+                                            onClick={() => handlePreview(member)}
+                                            className="text-orange-500 underline hover:text-orange-600 focus:outline-none"
+                                            aria-label="View Invoice"
+                                        >
                                             View
                                         </button>
                                     </td>
-                                    <td className="flex gap-3 py-4 px-2 text-center">
-                                        <button onClick={() => router.push(`/member/${member._id}`)} className="text-yellow-500">
+                                    <td className="py-4 px-2 flex gap-2 justify-center sm:justify-start">
+                                        <button
+                                            onClick={() => router.push(`/member/${member._id}`)}
+                                            className="text-yellow-500 hover:text-yellow-600 focus:outline-none"
+                                            aria-label="Edit Member"
+                                        >
                                             <HiPencilSquare size={20} />
                                         </button>
-                                        <button onClick={() => router.push(`/member/${member._id}/update`)} className='text-green-500'>
+                                        <button
+                                            onClick={() => router.push(`/member/${member._id}/update`)}
+                                            className="text-green-500 hover:text-green-600 focus:outline-none"
+                                            aria-label="Upgrade Plan"
+                                        >
                                             <GrUpgrade size={20} />
                                         </button>
-                                        <button onClick={() => handleDeleteClick(member)} className="text-red-500">
+                                        <button
+                                            onClick={() => handleDeleteClick(member)}
+                                            className="text-red-500 hover:text-red-600 focus:outline-none"
+                                            aria-label="Delete Member"
+                                        >
                                             <MdOutlineDeleteForever size={20} />
                                         </button>
                                     </td>
                                 </tr>
                             ))}
+                            {
+                                filteredMembers?.length === 0 && (
+                                    <tr>
+                                        <td
+                                            className="py-4 px-2 min-w-full text-center"
+                                            colSpan={10}
+                                        >
+                                            No members found
+                                        </td>
+                                    </tr>
+                                )
+                            }
                         </tbody>
                     </table>
                 </div>
-
                 {/* Invoice Modal */}
                 {showModal && (
                     <InvoiceModal
@@ -271,21 +326,23 @@ const MemberList = () => {
                                     value={pin}
                                     onChange={(e) => setPin(e.target.value)}
                                     placeholder="Enter PIN"
-                                    className="border rounded-md p-2 flex-1"
+                                    className="border rounded-md p-2 flex-1 focus:outline-orange-500 "
                                 />
-                                <button
-                                    onClick={confirmDeleteMember}
-                                    className="bg-red-500 text-white p-2 rounded-md"
-                                >
-                                    Confirm
-                                </button>
                             </div>
+                            <div className='flex justify-end gap-2 mt-4'>
                             <button
                                 onClick={() => setShowDeleteDialog(false)}
-                                className="mt-4 text-blue-500"
+                                className="border-2 border-orange-500 text-orange-500 bg-white p-2 rounded-md"
                             >
                                 Cancel
                             </button>
+                            <button
+                                onClick={confirmDeleteMember}
+                                className="bg-orange-500 text-white p-2 rounded-md"
+                            >
+                                Confirm
+                            </button>
+                            </div>
                         </div>
                     </div>
                 )}

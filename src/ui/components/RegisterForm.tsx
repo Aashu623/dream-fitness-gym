@@ -32,15 +32,15 @@ function RegisterForm() {
     const { data: members } = useGetAllMembersQuery();
     const [addMember, { isLoading: adding }] = useAddMemberMutation();
     const initialFormData = {
-        serialNumber: '',
+        serialNumber: 0,
         name: '',
         email: '',
         gender: '',
-        age: '',
+        age: 0,
         phone: '',
         address: '',
         emergencyContact: '',
-        duration: '',
+        duration: 1,
         paymentMode: 'upi',
         utr: '',
         receiverName: '',
@@ -52,7 +52,7 @@ function RegisterForm() {
     useEffect(() => {
         if (members && members.length > 0) {
             const lastMemberSerial = Math.max(...members.map((member: any) => member.serialNumber || 1));
-            setFormData((prev) => ({ ...prev, serialNumber: String(lastMemberSerial + 1) }));
+            setFormData((prev) => ({ ...prev, serialNumber: lastMemberSerial + 1 }));
         }
     }, [members]);
 
@@ -66,9 +66,7 @@ function RegisterForm() {
 
         const validation = memberSchema.safeParse({
             ...formData,
-            serialNumber: parseInt(formData.serialNumber),
-            duration: parseInt(formData.duration),
-            age: parseInt(formData.age),
+            age: formData.age,
             DOJ: new Date(formData.DOJ),
             utr: formData.paymentMode === "upi" ? formData.utr : undefined,
             receiverName: formData.paymentMode === "cash" ? formData.receiverName : undefined,
@@ -195,6 +193,7 @@ function RegisterForm() {
                             value={formData.duration}
                             onChange={handleInputChange}
                             options={[
+                                { value: '', label: "Select duration", disabled: true },
                                 { value: 1, label: '1 month' },
                                 { value: 2, label: '2 months' },
                                 { value: 3, label: '3 months' },
