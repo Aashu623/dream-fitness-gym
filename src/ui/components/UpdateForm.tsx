@@ -191,7 +191,6 @@ function MemberDetailsPage() {
               placeholder="Serial Number"
               value={formData.serialNumber}
               onChange={handleChange}
-              readOnly
               required
             />
 
