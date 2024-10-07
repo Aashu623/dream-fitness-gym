@@ -10,6 +10,7 @@ import Image from "next/image";
 import formBg from '@/assets/formBg.png';
 import InputField from "./InputField";
 import { ColorRing } from 'react-loader-spinner'
+import ErrorPage from "./Error";
 
 
 export default function UpdatePlanPage() {
@@ -48,7 +49,7 @@ export default function UpdatePlanPage() {
     };
 
     if (memberLoading) return <Loader />;
-    if (memberError) return <div className="text-center text-lg text-red-500">Error loading member data.</div>;
+    if (memberError) return <ErrorPage/>;
 
     return (
         <>

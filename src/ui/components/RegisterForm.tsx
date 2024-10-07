@@ -58,8 +58,12 @@ function RegisterForm() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        const updatedValue = name === "duration" || name === "age" ? parseInt(value, 10) || '' : value;
+
+        setFormData((prev) => ({ ...prev, [name]: updatedValue }));
     };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -74,6 +78,7 @@ function RegisterForm() {
 
         if (!validation.success) {
             validation.error.issues.forEach((issue) => toast.error(issue.message));
+            validation.error.issues.forEach((issue) => console.log(issue));
             return;
         }
 
@@ -101,7 +106,7 @@ function RegisterForm() {
                             name="name"
                             type="text"
                             value={formData.name}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             placeholder="Enter your name"
                             required
                         />
@@ -112,7 +117,7 @@ function RegisterForm() {
                             name="serialNumber"
                             type="number"
                             value={formData.serialNumber}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                         />
 
                         {/** Email **/}
@@ -121,7 +126,7 @@ function RegisterForm() {
                             name="email"
                             type="email"
                             value={formData.email}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             placeholder="Enter your email"
                         />
 
@@ -130,7 +135,7 @@ function RegisterForm() {
                             label="Gender"
                             name="gender"
                             value={formData.gender}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             options={[
                                 { value: '', label: 'Select your gender', disabled: true },
                                 { value: 'male', label: 'Male' },
@@ -146,7 +151,7 @@ function RegisterForm() {
                             name="age"
                             type="number"
                             value={formData.age}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             placeholder="Enter your age"
                             required
                         />
@@ -171,7 +176,7 @@ function RegisterForm() {
                         name="emergencyContact"
                         type="tel"
                         value={formData.emergencyContact}
-                        onChange={handleInputChange}
+                        onChange={(e)=>handleInputChange(e)}
                         placeholder="Enter emergency contact number"
                     /> */}
 
@@ -181,7 +186,7 @@ function RegisterForm() {
                             name="address"
                             type="text"
                             value={formData.address}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             placeholder="Enter your address"
                         />
 
@@ -191,7 +196,7 @@ function RegisterForm() {
                             name="duration"
                             type="number"
                             value={formData.duration}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             options={[
                                 { value: '', label: "Select duration", disabled: true },
                                 { value: 1, label: '1 month' },
@@ -215,7 +220,7 @@ function RegisterForm() {
                             label="Payment Mode"
                             name="paymentMode"
                             value={formData.paymentMode}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             options={[
                                 { value: '', label: 'Select payment mode', disabled: true },
                                 { value: 'upi', label: 'UPI' },
@@ -230,7 +235,7 @@ function RegisterForm() {
                             name="amount"
                             type="text"
                             value={formData.amount}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             placeholder="Enter total amount"
                             required
                         />
@@ -242,7 +247,7 @@ function RegisterForm() {
                                 name="utr"
                                 type="text"
                                 value={formData.utr}
-                                onChange={handleInputChange}
+                                onChange={(e) => handleInputChange(e)}
                                 placeholder="Enter UTR"
                                 required
                             />
@@ -255,7 +260,7 @@ function RegisterForm() {
                                 name="receiverName"
                                 type="text"
                                 value={formData.receiverName}
-                                onChange={handleInputChange}
+                                onChange={(e) => handleInputChange(e)}
                                 placeholder="Enter receiver name"
                                 required
                             />
@@ -267,7 +272,7 @@ function RegisterForm() {
                             name="DOJ"
                             type="date"
                             value={formData.DOJ}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                             required
                         />
 

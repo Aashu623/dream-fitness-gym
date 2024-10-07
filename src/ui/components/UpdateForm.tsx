@@ -9,6 +9,7 @@ import {
 import { z } from "zod";
 import Image from "next/image";
 import formBg from '@/assets/formBg.png';
+import ErrorPage from "./Error";
 
 
 const memberSchema = z.object({
@@ -151,13 +152,14 @@ function MemberDetailsPage() {
     }
   };
 
+
   if (fetching)
     return (
       <div className="min-w-screen min-h-screen flex items-center justify-center">
         <div className="loader"></div>
       </div>
     );
-  if (isError) return <p>Error loading member details</p>;
+  if (isError) return <ErrorPage />;
 
   return (
     <>
@@ -169,7 +171,7 @@ function MemberDetailsPage() {
         </div>
         <div className="flex flex-col gap-4 rounded-r-md bg-gray-800 w-full px-8 pt-6 shadow-lg">
           <form
-            onSubmit={(e)=>e.preventDefault()}
+            onSubmit={(e) => e.preventDefault()}
             className="min-w-[600px] grid grid-cols-1 sm:grid-cols-2 gap-3 bg-transparent relative">
 
             {/* Name */}
@@ -343,7 +345,7 @@ function MemberDetailsPage() {
           <div className="col-span-2 flex justify-end gap-2 mb-4">
             <button
               type="button"
-              onClick={(e)=>setShowUpdateModal(true)}
+              onClick={(e) => setShowUpdateModal(true)}
               className="bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               {updating ? "Updating..." : "Update Member"}
@@ -371,7 +373,7 @@ function MemberDetailsPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={()=>handleConfirmUpdate()}
+                    onClick={() => handleConfirmUpdate()}
                     className="bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700"
                   >
                     Confirm
