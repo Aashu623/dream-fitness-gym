@@ -1,70 +1,39 @@
 import React from 'react';
 
-const Skeleton = () => {
+const MemberListSkeleton = () => {
     return (
-        <div className="p-8 bg-orange-100 min-h-screen flex justify-center">
-            <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg overflow-hidden">
-                <h2 className="text-3xl text-center font-bold mb-6">Dream Fitness Members</h2>
-                <div className="flex flex-wrap gap-4 mb-4">
-                    <input
-                        type="text"
-                        className="border border-gray-300 p-2 rounded w-1/4"
-                        placeholder="Search by name"
-                        disabled
-                    />
-                    <input
-                        type="text"
-                        className="border rounded-md p-2"
-                        placeholder="Search by name"
-                        disabled
-                    />
-                    <input
-                        type="text"
-                        className="border rounded-md p-2"
-                        placeholder="Search by name"
-                        disabled
-                    />
-                    <button className="bg-green-500 text-white px-4 py-2 rounded" disabled>
-                        Download Excel
-                    </button>
-                </div>
-                <table className="overflow-x-auto max-h-[75vh]">
-                    <thead className="bg-gray-200">
+        <div className="min-h-screen bg-gray-900 p-6">
+            <div className="mb-4 flex justify-between items-center">
+                <div className="bg-gray-700 w-48 h-10 rounded-lg animate-pulse"></div>
+                <div className="bg-gray-700 w-28 h-10 rounded-lg animate-pulse"></div>
+            </div>
+
+            {/* Table Skeleton */}
+            <div className="bg-gray-800 shadow-md rounded-lg overflow-hidden">
+                <table className="w-full text-sm text-left text-gray-400">
+                    <thead className="text-xs uppercase bg-gray-700 text-gray-400">
                         <tr>
-                            <th className="px-4 py-3">Sr. No.</th>
-                            <th className="px-4 py-3">Name</th>
-                            <th className="px-4 py-2">Email</th>
-                            <th className="px-4 py-2">Phone</th>
-                            <th className="px-4 py-2">Date of Joining</th>
-                            <th className="px-4 py-2">Valid Upto</th>
-                            <th className="px-4 py-2">Actions</th>
+                            {['Status', '#', 'Name', 'Email', 'Phone', 'DOJ', 'Valid Upto', 'Actions'].map((header, idx) => (
+                                <th key={idx} scope="col" className="py-3 px-2">
+                                    <div className="bg-gray-700 h-4 w-20 rounded animate-pulse"></div>
+                                </th>
+                            ))}
                         </tr>
                     </thead>
-                    <tbody>
-                        {[...Array(7)].map((_, index) => (
-                            <tr key={index} className="animate-pulse">
-                                <td className="px-4 py-2">
-                                    <div className="h-4 w-8 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-4 py-2">
-                                    <div className="h-4 w-32 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-4 py-2">
-                                    <div className="h-4 w-48 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-4 py-2">
-                                    <div className="h-4 w-24 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-4 py-2">
-                                    <div className="h-4 w-24 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-4 py-2">
-                                    <div className="h-4 w-24 bg-gray-300 rounded"></div>
-                                </td>
-                                <td className="px-4 py-2 flex justify-center space-x-2">
-                                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                                    <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    <tbody className="divide-y divide-gray-600">
+                        {/* Skeleton Rows */}
+                        {[...Array(10)].map((_, index) => (
+                            <tr key={index} className="bg-gray-700">
+                                {Array(8).fill(2).map((_, idx) => (
+                                    <td key={idx} className="py-3 px-2">
+                                        <div className="bg-gray-600 h-4 w-full rounded animate-pulse"></div>
+                                    </td>
+                                ))}
+                                <td className="py-3 px-2">
+                                    <div className="flex space-x-2">
+                                        <div className="bg-gray-600 h-5 w-5 rounded-lg animate-pulse"></div>
+                                        <div className="bg-gray-600 h-5 w-5 rounded-lg animate-pulse"></div>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -75,4 +44,4 @@ const Skeleton = () => {
     );
 };
 
-export default Skeleton;
+export default MemberListSkeleton;

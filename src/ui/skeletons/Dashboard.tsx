@@ -29,28 +29,16 @@ export default function Dashboard() {
                     </li>
                 </ul>
                 <div className='flex flex-col gap-4 py-6 animate-pulse'>
-                    <div className="p-4 bg-orange-400 text-white rounded-lg shadow-lg text-center">
+                    <div className="p-4 bg-gray-500 text-white rounded-lg shadow-lg text-center">
                         <h2 className="text-lg font-semibold">Total Amount Collected</h2>
-                        <span className="text-3xl font-bold"></span>
+                        <div className="bg-gray-400 h-8 w-full rounded"></div>
                     </div>
-                    <div className="bg-orange-400 text-white p-6 rounded-lg shadow-lg">
+                    <div className="bg-gray-500 text-white p-6 rounded-lg shadow-lg">
                         <h2 className="text-lg font-semibold mb-4">Filter by Joining Date</h2>
                         <div className="flex flex-col gap-4 text-black">
-                            <input
-                                type="date"
-                                name="startDate"
-                                className="p-2 border rounded "
-                                placeholder="Start Date"
-                            />
-                            <input
-                                type="date"
-                                name="endDate"
-                                className="p-2 border rounded"
-                                placeholder="End Date"
-                            />
-                            <div className="text-lg text-white">
-                                <strong>Total Collection (in selected range): </strong>
-                            </div>
+                            <div className="bg-gray-400 h-10 w-full rounded"></div>
+                            <div className="bg-gray-400 h-10 w-full rounded"></div>
+                            <div className="bg-gray-400 h-8 w-full rounded"></div>
                         </div>
                     </div>
                 </div>
@@ -61,21 +49,17 @@ export default function Dashboard() {
                     <h1 className="text-3xl font-bold">Dream Fitness</h1>
                 </header>
 
+                {/* Skeleton for Member Stats */}
                 <section className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="bg-orange-500 text-white rounded-lg p-6 text-center">
-                        <h2 className="text-xl">Total Members</h2>
-                        <p className="text-4xl font-bold">20</p>
-                    </div>
-                    <div className="bg-orange-500 text-white rounded-lg p-6 text-center">
-                        <h2 className="text-xl">Male Members</h2>
-                        <p className="text-4xl font-bold">14</p>
-                    </div>
-                    <div className="bg-orange-500 text-white rounded-lg p-6 text-center">
-                        <h2 className="text-xl">Female Members</h2>
-                        <p className="text-4xl font-bold">6</p>
-                    </div>
+                    {[...Array(3)].map((_, idx) => (
+                        <div key={idx} className="bg-gray-500 animate-pulse rounded-lg p-6 text-center">
+                            <div className="bg-gray-400 h-6 w-32 mx-auto rounded mb-2"></div>
+                            <div className="bg-gray-400 h-10 w-20 mx-auto rounded"></div>
+                        </div>
+                    ))}
                 </section>
 
+                {/* Skeleton for Charts */}
                 <section className="grid grid-cols-2 gap-4">
                     <div className="bg-white p-6 rounded-lg shadow-md">
                         <h3 className="text-xl font-semibold mb-4">Gender Distribution</h3>
@@ -96,10 +80,9 @@ export default function Dashboard() {
                     </div>
                 </section>
 
+                {/* Skeleton for Button */}
                 <div className="mt-6 text-center">
-                    <button className="bg-orange-500 text-white px-4 py-2 rounded-lg">
-                        View All Members
-                    </button>
+                    <div className="bg-gray-400 animate-pulse h-10 w-40 mx-auto rounded-lg"></div>
                 </div>
             </main>
         </div>
