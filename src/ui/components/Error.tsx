@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import errorBg from "@/assets/errorBg.png";
 
 function ErrorPage() {
   const router = useRouter();
@@ -14,11 +12,6 @@ function ErrorPage() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center relative bg-gray-800">
-        <Image
-          src={errorBg}
-          alt="Error Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
-        />
 
         <div className="relative z-10 text-center flex flex-col items-center gap-4">
           <h1 className="text-9xl font-extrabold text-gray-500 absolute top-10">
