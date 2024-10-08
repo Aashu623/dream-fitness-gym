@@ -204,40 +204,35 @@ const MemberList = () => {
                     <table className="min-w-full bg-gray-800">
                         <thead className="bg-gray-900 sticky top-0 z-10">
                             <tr>
-                                <th className="py-3 px-2 text-left cursor-pointer text-gray-500">
+                                <th className="py-3 px-2 text-left cursor-pointer text-white">
                                     Verified
                                 </th>
                                 <th
-                                    className="py-3 px-2 text-left cursor-pointer text-gray-500"
+                                    className="py-3 px-2 text-left cursor-pointer text-white"
                                     onClick={() => handleSort('serialNumber')}
                                 >
                                     SN {'↑↓'}
                                 </th>
                                 <th
-                                    className="py-3 px-2 text-left cursor-pointer text-gray-500"
+                                    className="py-3 px-2 text-left cursor-pointer text-white"
                                     onClick={() => handleSort('name')}
                                 >
                                     Name{'↑↓'}
                                 </th>
-                                <th className="py-3 px-2 text-left text-gray-500">Email</th>
-                                <th className="py-3 px-2 text-left text-gray-500">Phone</th>
-                                <th className="py-3 px-2 text-left text-gray-500">Date of Joining</th>
-                                <th className="py-3 px-2 text-left text-gray-500">Valid From</th>
-                                <th className="py-3 px-2 text-left text-gray-500">Valid Upto</th>
-                                <th className="py-3 px-2 text-left text-gray-500">Invoice</th>
-                                <th className="py-3 px-2 text-left text-gray-500">Actions</th>
+                                <th className="py-3 px-2 text-left text-white">Email</th>
+                                <th className="py-3 px-2 text-left text-white">Phone</th>
+                                <th className="py-3 px-2 text-left text-white">Date of Joining</th>
+                                <th className="py-3 px-2 text-left text-white">Valid From</th>
+                                <th className="py-3 px-2 text-left text-white">Valid Upto</th>
+                                <th className="py-3 px-2 text-left text-white">Invoice</th>
+                                <th className="py-3 px-2 text-left text-white">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-900">
                             {filteredMembers?.map((member, index) => (
                                 <tr
                                     key={index}
-                                    className={`hover:bg-gray-900 text-gray-600 ${isExpiringSoon(
-                                        calculateValidUpto(member.planStarted, member.duration)
-                                    )
-                                        ? 'bg-yellow-100'
-                                        : ''
-                                        }`}
+                                    className={`hover:bg-gray-900 text-white transition duration-200 ease-in-out cursor-pointer`}
                                 >
                                     <td className="py-4 px-2 text-center">
                                         {member.verified ? '✅' : '⚠️'}
