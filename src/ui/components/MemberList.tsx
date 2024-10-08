@@ -149,17 +149,17 @@ const MemberList = () => {
         <div className="py-8 px-4 bg-gradient-to-r from-black via-gray-800 to-orange-900 min-h-screen flex justify-center">
             <div className=" flex flex-col mx-auto p-6 bg-gray-800 shadow-lg rounded-lg overflow-hidden gap-2">
                 <div className='relative w-full flex justify-between items-center bg-gray-800 py-4'>
-                    <div className="border border-gray-900 rounded-md flex relative w-5/6 shadow-inner">
-                        <FaSearch className='absolute top-3 left-2 text-gray-900' />
+                    <div className="border border-white rounded-md flex relative w-5/6 shadow-inner">
+                        <FaSearch className='absolute top-3 left-2 text-white' />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search by name"
-                            className="bg-transparent px-4 py-2 mx-8 w-full focus:outline-none placeholder:text-gray-900"
+                            className="bg-transparent px-4 py-2 mx-8 w-full focus:outline-none placeholder:text-white"
                         />
                         <IoMdOptions
-                            className='absolute top-3 right-2 text-gray-900 cursor-pointer hover:text-orange-500 transition duration-200 ease-in-out'
+                            className='absolute top-3 right-2 text-white cursor-pointer hover:text-orange-500 transition duration-200 ease-in-out'
                             onClick={() => setShowFilterOptionsModal(!showFilterOptionsModal)}
                         />
                         {showFilterOptionsModal && (
